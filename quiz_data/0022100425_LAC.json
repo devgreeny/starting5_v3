@@ -1,0 +1,114 @@
+{
+  "season": "2021-22",
+  "game_id": "0022100425",
+  "team_abbr": "LAC",
+  "opponent_abbr": "UTA",
+  "matchup": "LAC 103 - 124 UTA",
+  "players": [
+    {
+      "name": "Terance Mann",
+      "school": "Florida St.",
+      "school_type": "College",
+      "conference": "ACC",
+      "player_id": 1629611,
+      "position": "Guard-Forward",
+      "game_stats": {
+        "pts": 3,
+        "ast": 2,
+        "reb": 5,
+        "stl": 0,
+        "blk": 0
+      },
+      "game_contribution_pct": {
+        "points_pct": 0.029,
+        "assists_pct": 0.083,
+        "rebounds_pct": 0.119,
+        "defense_pct": 0.0
+      }
+    },
+    {
+      "name": "Marcus Morris Sr.",
+      "school": "Kansas",
+      "school_type": "College",
+      "conference": "B12",
+      "player_id": 202694,
+      "position": "Forward",
+      "game_stats": {
+        "pts": 24,
+        "ast": 1,
+        "reb": 8,
+        "stl": 0,
+        "blk": 0
+      },
+      "game_contribution_pct": {
+        "points_pct": 0.233,
+        "assists_pct": 0.042,
+        "rebounds_pct": 0.19,
+        "defense_pct": 0.0
+      }
+    },
+    {
+      "name": "Ivica Zubac",
+      "school": "Mega Basket",
+      "school_type": "Other",
+      "conference": "Other",
+      "player_id": 1627826,
+      "position": "Center",
+      "game_stats": {
+        "pts": 4,
+        "ast": 0,
+        "reb": 6,
+        "stl": 2,
+        "blk": 1
+      },
+      "game_contribution_pct": {
+        "points_pct": 0.039,
+        "assists_pct": 0.0,
+        "rebounds_pct": 0.143,
+        "defense_pct": 0.273
+      }
+    },
+    {
+      "name": "Luke Kennard",
+      "school": "Duke",
+      "school_type": "College",
+      "conference": "ACC",
+      "player_id": 1628379,
+      "position": "Guard",
+      "game_stats": {
+        "pts": 10,
+        "ast": 3,
+        "reb": 2,
+        "stl": 0,
+        "blk": 0
+      },
+      "game_contribution_pct": {
+        "points_pct": 0.097,
+        "assists_pct": 0.125,
+        "rebounds_pct": 0.048,
+        "defense_pct": 0.0
+      }
+    },
+    {
+      "name": "Reggie Jackson",
+      "school": "Boston College",
+      "school_type": "College",
+      "conference": "ACC",
+      "player_id": 202704,
+      "position": "Guard",
+      "game_stats": {
+        "pts": 15,
+        "ast": 9,
+        "reb": 5,
+        "stl": 0,
+        "blk": 1
+      },
+      "game_contribution_pct": {
+        "points_pct": 0.146,
+        "assists_pct": 0.375,
+        "rebounds_pct": 0.119,
+        "defense_pct": 0.091
+      }
+    }
+  ]
+}

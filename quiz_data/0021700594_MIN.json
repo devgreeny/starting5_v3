@@ -1,0 +1,114 @@
+{
+  "season": "2017-18",
+  "game_id": "0021700594",
+  "team_abbr": "MIN",
+  "opponent_abbr": "CLE",
+  "matchup": "CLE 99 - 127 MIN",
+  "players": [
+    {
+      "name": "Andrew Wiggins",
+      "school": "Kansas",
+      "school_type": "College",
+      "conference": "B12",
+      "player_id": 203952,
+      "position": "Forward",
+      "game_stats": {
+        "pts": 25.0,
+        "ast": 1.0,
+        "reb": 6.0,
+        "stl": 0.0,
+        "blk": 0.0
+      },
+      "game_contribution_pct": {
+        "points_pct": 0.197,
+        "assists_pct": 0.033,
+        "rebounds_pct": 0.107,
+        "defense_pct": 0.0
+      }
+    },
+    {
+      "name": "Taj Gibson",
+      "school": "Southern California",
+      "school_type": "College",
+      "conference": "P12",
+      "player_id": 201959,
+      "position": "Forward",
+      "game_stats": {
+        "pts": 16.0,
+        "ast": 1.0,
+        "reb": 13.0,
+        "stl": 0.0,
+        "blk": 1.0
+      },
+      "game_contribution_pct": {
+        "points_pct": 0.126,
+        "assists_pct": 0.033,
+        "rebounds_pct": 0.232,
+        "defense_pct": 0.125
+      }
+    },
+    {
+      "name": "Karl-Anthony Towns",
+      "school": "Kentucky",
+      "school_type": "College",
+      "conference": "SEC",
+      "player_id": 1626157,
+      "position": "Center-Forward",
+      "game_stats": {
+        "pts": 19.0,
+        "ast": 4.0,
+        "reb": 12.0,
+        "stl": 0.0,
+        "blk": 1.0
+      },
+      "game_contribution_pct": {
+        "points_pct": 0.15,
+        "assists_pct": 0.133,
+        "rebounds_pct": 0.214,
+        "defense_pct": 0.125
+      }
+    },
+    {
+      "name": "Jimmy Butler III",
+      "school": "Marquette",
+      "school_type": "College",
+      "conference": "BE",
+      "player_id": 202710,
+      "position": "Forward",
+      "game_stats": {
+        "pts": 21.0,
+        "ast": 9.0,
+        "reb": 8.0,
+        "stl": 3.0,
+        "blk": 0.0
+      },
+      "game_contribution_pct": {
+        "points_pct": 0.165,
+        "assists_pct": 0.3,
+        "rebounds_pct": 0.143,
+        "defense_pct": 0.375
+      }
+    },
+    {
+      "name": "Tyus Jones",
+      "school": "Duke",
+      "school_type": "College",
+      "conference": "ACC",
+      "player_id": 1626145,
+      "position": "Guard",
+      "game_stats": {
+        "pts": 6.0,
+        "ast": 8.0,
+        "reb": 2.0,
+        "stl": 2.0,
+        "blk": 0.0
+      },
+      "game_contribution_pct": {
+        "points_pct": 0.047,
+        "assists_pct": 0.267,
+        "rebounds_pct": 0.036,
+        "defense_pct": 0.25
+      }
+    }
+  ]
+}

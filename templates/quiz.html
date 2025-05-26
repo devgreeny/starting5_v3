@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NBA College Quiz</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+</head>
+<body>
+  <h1>
+    WHERE DID THESE PLAYERS PLAY BEFORE THE NBA?<br>
+    <span style="font-size: 0.7rem;">Game ID: {{ data.game_id }}<br>Matchup: {{ data.matchup }}</span>
+  </h1>
+
+  <form method="POST">
+    <div class="row-top">
+      {% for player in data.players[0:3] %}
+      <div class="card">
+        <img src="https://cdn.nba.com/headshots/nba/latest/260x190/{{ player.player_id }}.png" alt="{{ player.name }}">
+        <h3>{{ player.name.upper() }}</h3>
+        <p>{{ player.position }}</p>
+
+        <div class="bar-label">Points</div>
+        <div class="bar"><div class="bar-fill" style="width: {{ (player.game_contribution_pct.points_pct * 100)|round(1) }}%;"><span class="bar-value">{{ player.game_stats.ppg }}</span></div></div>
+
+        <div class="bar-label">Assists</div>
+        <div class="bar"><div class="bar-fill" style="width: {{ (player.game_contribution_pct.assists_pct * 100)|round(1) }}%;"><span class="bar-value">{{ player.game_stats.apg }}</span></div></div>
+
+        <div class="bar-label">Rebounds</div>
+        <div class="bar"><div class="bar-fill" style="width: {{ (player.game_contribution_pct.rebounds_pct * 100)|round(1) }}%;"><span class="bar-value">{{ player.game_stats.rpg }}</span></div></div>
+
+        <select name="{{ player.name }}" class="guess-select" data-conference="{{ player.conference }}" required>
+          <option disabled selected value></option>
+          {% for college in colleges %}
+            <option value="{{ college }}" data-conf="{{ college_confs[college] | default('Other') }}">{{ college }}</option>
+          {% endfor %}
+          <option value="Other" data-conf="Other">Other</option>
+        </select>
+
+        <div class="button-row">
+          <button type="button" class="hint-btn">Hint</button>
+          <button type="button" class="random-btn">Random</button>
+        </div>
+        <p class="hint-text" style="display:none; font-size:0.45rem; margin-top:0.25rem; color:#60a5fa;"></p>
+
+        {% if results %}
+        <p class="result">
+          {% if player.result.startswith('✅') %}
+            <span class="correct">{{ player.result }}</span>
+          {% else %}
+            <span class="wrong">{{ player.result }}</span> – Correct: {{ player.correct }}
+          {% endif %}
+        </p>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="row-bottom">
+      {% for player in data.players[3:5] %}
+      <div class="card">
+        <img src="https://cdn.nba.com/headshots/nba/latest/260x190/{{ player.player_id }}.png" alt="{{ player.name }}">
+        <h3>{{ player.name.upper() }}</h3>
+        <p>{{ player.position }}</p>
+
+        <div class="bar-label">Points</div>
+        <div class="bar"><div class="bar-fill" style="width: {{ (player.game_contribution_pct.points_pct * 100)|round(1) }}%;"><span class="bar-value">{{ player.game_stats.ppg }}</span></div></div>
+
+        <div class="bar-label">Assists</div>
+        <div class="bar"><div class="bar-fill" style="width: {{ (player.game_contribution_pct.assists_pct * 100)|round(1) }}%;"><span class="bar-value">{{ player.game_stats.apg }}</span></div></div>
+
+        <div class="bar-label">Rebounds</div>
+        <div class="bar"><div class="bar-fill" style="width: {{ (player.game_contribution_pct.rebounds_pct * 100)|round(1) }}%;"><span class="bar-value">{{ player.game_stats.rpg }}</span></div></div>
+
+        <select name="{{ player.name }}" class="guess-select" data-conference="{{ player.conference }}" required>
+          <option disabled selected value></option>
+          {% for college in colleges %}
+            <option value="{{ college }}" data-conf="{{ college_confs[college] | default('Other') }}">{{ college }}</option>
+          {% endfor %}
+          <option value="Other" data-conf="Other">Other</option>
+        </select>
+
+        <div class="button-row">
+          <button type="button" class="hint-btn">Hint</button>
+          <button type="button" class="random-btn">Random</button>
+        </div>
+        <p class="hint-text" style="display:none; font-size:0.45rem; margin-top:0.25rem; color:#60a5fa;"></p>
+
+        {% if results %}
+        <p class="result">
+          {% if player.result.startswith('✅') %}
+            <span class="correct">{{ player.result }}</span>
+          {% else %}
+            <span class="wrong">{{ player.result }}</span> – Correct: {{ player.correct }}
+          {% endif %}
+        </p>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+
+    <button type="submit" class="submit-btn">Submit All Guesses</button>
+    <br>
+    <a href="/new" class="play-again">🔁 Play Again</a>
+  </form>
+
+  <!-- Hint + Random + Filtering Logic -->
+  <script>
+    $(document).ready(function () {
+      // Store original options
+      $('.guess-select').each(function () {
+        const $select = $(this);
+        const options = $select.find('option').map(function () {
+          return {
+            id: $(this).val(),
+            text: $(this).text(),
+            conf: $(this).data('conf')
+          };
+        }).get();
+        $select.data('full-options', options);
+
+        $select.select2({
+          width: '100%',
+          placeholder: "Enter Guess",
+          minimumResultsForSearch: 5,
+          theme: 'classic',
+          dropdownAutoWidth: true
+        });
+      });
+
+      $('.hint-btn').click(function () {
+        const $card = $(this).closest('.card');
+        const $select = $card.find('.guess-select');
+        const conference = $select.data('conference');
+        const fullOptions = $select.data('full-options');
+
+        const filtered = fullOptions.filter(opt =>
+          opt.conf === conference || opt.conf === "Other"
+        );
+
+        $select.empty().append('<option disabled selected value></option>');
+        filtered.forEach(opt => {
+          $select.append(new Option(opt.text, opt.id));
+        });
+
+        $select.select2({
+          width: '100%',
+          placeholder: "Enter Guess",
+          minimumResultsForSearch: 5,
+          theme: 'classic',
+          dropdownAutoWidth: true
+        });
+
+        $card.find('.hint-text').text("Conference: " + conference).show();
+      });
+
+      $('.random-btn').click(function () {
+        const $card = $(this).closest('.card');
+        const $select = $card.find('.guess-select');
+        const options = $select.find('option').not('[disabled]');
+        const randomOption = options[Math.floor(Math.random() * options.length)];
+        $select.val(randomOption.value).trigger('change');
+      });
+    });
+  </script>
+</body>
+</html>

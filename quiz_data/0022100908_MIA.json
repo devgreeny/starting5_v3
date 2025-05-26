@@ -1,0 +1,114 @@
+{
+  "season": "2021-22",
+  "game_id": "0022100908",
+  "team_abbr": "MIA",
+  "opponent_abbr": "SAS",
+  "matchup": "SAS 129 - 133 MIA",
+  "players": [
+    {
+      "name": "Jimmy Butler III",
+      "school": "Marquette",
+      "school_type": "College",
+      "conference": "BE",
+      "player_id": 202710,
+      "position": "Forward",
+      "game_stats": {
+        "pts": 27.0,
+        "ast": 3.0,
+        "reb": 3.0,
+        "stl": 2.0,
+        "blk": 0.0
+      },
+      "game_contribution_pct": {
+        "points_pct": 0.203,
+        "assists_pct": 0.12,
+        "rebounds_pct": 0.094,
+        "defense_pct": 0.182
+      }
+    },
+    {
+      "name": "P.J. Tucker",
+      "school": "Texas",
+      "school_type": "College",
+      "conference": "B12",
+      "player_id": 200782,
+      "position": "Forward",
+      "game_stats": {
+        "pts": 2.0,
+        "ast": 1.0,
+        "reb": 1.0,
+        "stl": 0.0,
+        "blk": 0.0
+      },
+      "game_contribution_pct": {
+        "points_pct": 0.015,
+        "assists_pct": 0.04,
+        "rebounds_pct": 0.031,
+        "defense_pct": 0.0
+      }
+    },
+    {
+      "name": "Bam Adebayo",
+      "school": "Kentucky",
+      "school_type": "College",
+      "conference": "SEC",
+      "player_id": 1628389,
+      "position": "Center-Forward",
+      "game_stats": {
+        "pts": 36.0,
+        "ast": 4.0,
+        "reb": 7.0,
+        "stl": 2.0,
+        "blk": 3.0
+      },
+      "game_contribution_pct": {
+        "points_pct": 0.271,
+        "assists_pct": 0.16,
+        "rebounds_pct": 0.219,
+        "defense_pct": 0.455
+      }
+    },
+    {
+      "name": "Duncan Robinson",
+      "school": "Michigan",
+      "school_type": "College",
+      "conference": "B10",
+      "player_id": 1629130,
+      "position": "Forward",
+      "game_stats": {
+        "pts": 6.0,
+        "ast": 0.0,
+        "reb": 0.0,
+        "stl": 0.0,
+        "blk": 0.0
+      },
+      "game_contribution_pct": {
+        "points_pct": 0.045,
+        "assists_pct": 0.0,
+        "rebounds_pct": 0.0,
+        "defense_pct": 0.0
+      }
+    },
+    {
+      "name": "Kyle Lowry",
+      "school": "Villanova",
+      "school_type": "College",
+      "conference": "BE",
+      "player_id": 200768,
+      "position": "Guard",
+      "game_stats": {
+        "pts": 13.0,
+        "ast": 10.0,
+        "reb": 3.0,
+        "stl": 1.0,
+        "blk": 0.0
+      },
+      "game_contribution_pct": {
+        "points_pct": 0.098,
+        "assists_pct": 0.4,
+        "rebounds_pct": 0.094,
+        "defense_pct": 0.091
+      }
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+{
+  "season": "2021-22",
+  "game_id": "0022100984",
+  "team_abbr": "ATL",
+  "opponent_abbr": "MIL",
+  "matchup": "ATL 115 - 124 MIL",
+  "players": [
+    {
+      "name": "De'Andre Hunter",
+      "school": "Virginia",
+      "school_type": "College",
+      "conference": "ACC",
+      "player_id": 1629631,
+      "position": "Forward-Guard",
+      "game_stats": {
+        "pts": 17.0,
+        "ast": 1.0,
+        "reb": 3.0,
+        "stl": 1.0,
+        "blk": 1.0
+      },
+      "game_contribution_pct": {
+        "points_pct": 0.148,
+        "assists_pct": 0.038,
+        "rebounds_pct": 0.068,
+        "defense_pct": 0.222
+      }
+    },
+    {
+      "name": "John Collins",
+      "school": "Wake Forest",
+      "school_type": "College",
+      "conference": "ACC",
+      "player_id": 1628381,
+      "position": "Forward-Center",
+      "game_stats": {
+        "pts": 2.0,
+        "ast": 0.0,
+        "reb": 5.0,
+        "stl": 0.0,
+        "blk": 0.0
+      },
+      "game_contribution_pct": {
+        "points_pct": 0.017,
+        "assists_pct": 0.0,
+        "rebounds_pct": 0.114,
+        "defense_pct": 0.0
+      }
+    },
+    {
+      "name": "Clint Capela",
+      "school": "Elan Chalon",
+      "school_type": "Other",
+      "conference": "Other",
+      "player_id": 203991,
+      "position": "Center",
+      "game_stats": {
+        "pts": 11.0,
+        "ast": 0.0,
+        "reb": 9.0,
+        "stl": 0.0,
+        "blk": 0.0
+      },
+      "game_contribution_pct": {
+        "points_pct": 0.096,
+        "assists_pct": 0.0,
+        "rebounds_pct": 0.205,
+        "defense_pct": 0.0
+      }
+    },
+    {
+      "name": "Kevin Huerter",
+      "school": "Maryland",
+      "school_type": "College",
+      "conference": "B10",
+      "player_id": 1628989,
+      "position": "Guard-Forward",
+      "game_stats": {
+        "pts": 16.0,
+        "ast": 3.0,
+        "reb": 3.0,
+        "stl": 0.0,
+        "blk": 0.0
+      },
+      "game_contribution_pct": {
+        "points_pct": 0.139,
+        "assists_pct": 0.115,
+        "rebounds_pct": 0.068,
+        "defense_pct": 0.0
+      }
+    },
+    {
+      "name": "Trae Young",
+      "school": "Oklahoma",
+      "school_type": "College",
+      "conference": "SEC",
+      "player_id": 1629027,
+      "position": "Guard",
+      "game_stats": {
+        "pts": 27.0,
+        "ast": 11.0,
+        "reb": 3.0,
+        "stl": 1.0,
+        "blk": 1.0
+      },
+      "game_contribution_pct": {
+        "points_pct": 0.235,
+        "assists_pct": 0.423,
+        "rebounds_pct": 0.068,
+        "defense_pct": 0.222
+      }
+    }
+  ]
+}
