@@ -1,41 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>NBA College Quiz</title>
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+  <!-- Pixel font & main CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+
+  <!-- Select2 -->
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </head>
 <body>
-  <h1>
-    WHERE DID THESE PLAYERS PLAY BEFORE THE NBA?<br>
-    <span style="font-size: 0.7rem;">Game ID: {{ data.game_id }}<br>Matchup: {{ data.matchup }}</span>
-  </h1>
+<div class="content">
+  <!-- ── Header ─────────────────────────────────────────────────────────── -->
+  <div class="header-container">
+    <div class="header-title">WHERE DID THESE PLAYERS PLAY BEFORE THE NBA?</div>
+    <div class="header-matchup"><span>{{ data.matchup }}</span></div>
+    <div class="header-game_id"><span>Game ID: {{ data.game_id }}</span></div>
+  </div>
 
   <form method="POST">
+    <input type="hidden" name="quiz_json_path" value="{{ quiz_json_path }}"/>
+
+    <!-- ── Top row (players 0-2) ─────────────────────────────────────────── -->
     <div class="row-top">
-      {% for player in data.players[0:3] %}
-      <div class="card">
-        <img src="https://cdn.nba.com/headshots/nba/latest/260x190/{{ player.player_id }}.png" alt="{{ player.name }}">
-        <h3>{{ player.name.upper() }}</h3>
+    {% for player in data.players[0:3] %}
+      {% set idx = loop.index0 %}
+      {% if results %}{% set r = results[idx] %}{% endif %}
+
+      <div class="card{% if results %}{% if r.startswith('✅') %} correct-card{% else %} wrong-card{% endif %}{% endif %}"
+           data-school-type="{{ player.school_type }}"
+           data-conference="{{ player.conference }}">
+
+        <!-- hidden “hint used” flag -->
+        <input type="hidden" name="hint_used_{{ idx }}" value="0" class="hint-flag"/>
+
+        <img src="https://cdn.nba.com/headshots/nba/latest/260x190/{{ player.player_id }}.png" alt="{{ player.name }}"/>
+
+        <!-- two-line name -->
+        <h3>
+          {% set parts = player.name.split(' ') %}
+          {% if parts|length > 1 %}
+            {{ parts[0].upper() }}<br/>{{ parts[1:]|join(' ')|upper }}
+          {% else %}
+            {{ player.name.upper() }}
+          {% endif %}
+        </h3>
         <p>{{ player.position }}</p>
 
-        <div class="bar-label">Points</div>
-        <div class="bar"><div class="bar-fill" style="width: {{ (player.game_contribution_pct.points_pct * 100)|round(1) }}%;"><span class="bar-value">{{ player.game_stats.ppg }}</span></div></div>
+        <!--  Pts / Ast / Reb rows (unchanged)  -->
+        <div class="stat-row"><span class="stat-label">Pts:</span><span class="stat-value">{{ player.game_stats.pts|int }}</span><div class="bar"><div class="bar-fill" style="width: {{ (player.game_contribution_pct.points_pct*100)|round(1) }}%;"></div></div></div>
+        <div class="stat-row"><span class="stat-label">Ast:</span><span class="stat-value">{{ player.game_stats.ast|int }}</span><div class="bar"><div class="bar-fill" style="width: {{ (player.game_contribution_pct.assists_pct*100)|round(1) }}%;"></div></div></div>
+        <div class="stat-row"><span class="stat-label">Reb:</span><span class="stat-value">{{ player.game_stats.reb|int }}</span><div class="bar"><div class="bar-fill" style="width: {{ (player.game_contribution_pct.rebounds_pct*100)|round(1) }}%;"></div></div></div>
 
-        <div class="bar-label">Assists</div>
-        <div class="bar"><div class="bar-fill" style="width: {{ (player.game_contribution_pct.assists_pct * 100)|round(1) }}%;"><span class="bar-value">{{ player.game_stats.apg }}</span></div></div>
-
-        <div class="bar-label">Rebounds</div>
-        <div class="bar"><div class="bar-fill" style="width: {{ (player.game_contribution_pct.rebounds_pct * 100)|round(1) }}%;"><span class="bar-value">{{ player.game_stats.rpg }}</span></div></div>
-
+        <!-- dropdown -->
         <select name="{{ player.name }}" class="guess-select" data-conference="{{ player.conference }}" required>
-          <option disabled selected value></option>
-          {% for college in colleges %}
-            <option value="{{ college }}" data-conf="{{ college_confs[college] | default('Other') }}">{{ college }}</option>
+          <option disabled selected></option>
+          {% for college in colleges|sort %}
+            <option value="{{ college }}" data-conf="{{ college_confs[college]|default('Other') }}">{{ college }}</option>
           {% endfor %}
           <option value="Other" data-conf="Other">Other</option>
         </select>
@@ -44,41 +69,55 @@
           <button type="button" class="hint-btn">Hint</button>
           <button type="button" class="random-btn">Random</button>
         </div>
-        <p class="hint-text" style="display:none; font-size:0.45rem; margin-top:0.25rem; color:#60a5fa;"></p>
 
-        {% if results %}
-        <p class="result">
-          {% if player.result.startswith('✅') %}
-            <span class="correct">{{ player.result }}</span>
+        <!-- hint text -->
+        <p class="hint-text" style="display:none;">
+          {% if player.school_type == 'College' %}
+            I played in the {{ player.conference }}
           {% else %}
-            <span class="wrong">{{ player.result }}</span> – Correct: {{ player.correct }}
+            I didn't attend college
           {% endif %}
         </p>
+
+        {% if results %}
+          <p class="result">{% if r.startswith('✅') %}<span class="correct">Correct!</span>{% else %}<span class="wrong">Incorrect</span>{% endif %}</p>
         {% endif %}
       </div>
-      {% endfor %}
+    {% endfor %}
     </div>
 
+    <!-- ── Bottom row (players 3-4) ───────────────────────────────────────── -->
     <div class="row-bottom">
-      {% for player in data.players[3:5] %}
-      <div class="card">
-        <img src="https://cdn.nba.com/headshots/nba/latest/260x190/{{ player.player_id }}.png" alt="{{ player.name }}">
-        <h3>{{ player.name.upper() }}</h3>
+    {% for player in data.players[3:5] %}
+      {% set idx = loop.index0 + 3 %}
+      {% if results %}{% set r = results[idx] %}{% endif %}
+
+      <div class="card{% if results %}{% if r.startswith('✅') %} correct-card{% else %} wrong-card{% endif %}{% endif %}"
+           data-school-type="{{ player.school_type }}"
+           data-conference="{{ player.conference }}">
+
+        <input type="hidden" name="hint_used_{{ idx }}" value="0" class="hint-flag"/>
+
+        <img src="https://cdn.nba.com/headshots/nba/latest/260x190/{{ player.player_id }}.png" alt="{{ player.name }}"/>
+
+        <h3>
+          {% set parts = player.name.split(' ') %}
+          {% if parts|length > 1 %}
+            {{ parts[0].upper() }}<br/>{{ parts[1:]|join(' ')|upper }}
+          {% else %}
+            {{ player.name.upper() }}
+          {% endif %}
+        </h3>
         <p>{{ player.position }}</p>
 
-        <div class="bar-label">Points</div>
-        <div class="bar"><div class="bar-fill" style="width: {{ (player.game_contribution_pct.points_pct * 100)|round(1) }}%;"><span class="bar-value">{{ player.game_stats.ppg }}</span></div></div>
-
-        <div class="bar-label">Assists</div>
-        <div class="bar"><div class="bar-fill" style="width: {{ (player.game_contribution_pct.assists_pct * 100)|round(1) }}%;"><span class="bar-value">{{ player.game_stats.apg }}</span></div></div>
-
-        <div class="bar-label">Rebounds</div>
-        <div class="bar"><div class="bar-fill" style="width: {{ (player.game_contribution_pct.rebounds_pct * 100)|round(1) }}%;"><span class="bar-value">{{ player.game_stats.rpg }}</span></div></div>
+        <div class="stat-row"><span class="stat-label">Pts:</span><span class="stat-value">{{ player.game_stats.pts|int }}</span><div class="bar"><div class="bar-fill" style="width: {{ (player.game_contribution_pct.points_pct*100)|round(1) }}%;"></div></div></div>
+        <div class="stat-row"><span class="stat-label">Ast:</span><span class="stat-value">{{ player.game_stats.ast|int }}</span><div class="bar"><div class="bar-fill" style="width: {{ (player.game_contribution_pct.assists_pct*100)|round(1) }}%;"></div></div></div>
+        <div class="stat-row"><span class="stat-label">Reb:</span><span class="stat-value">{{ player.game_stats.reb|int }}</span><div class="bar"><div class="bar-fill" style="width: {{ (player.game_contribution_pct.rebounds_pct*100)|round(1) }}%;"></div></div></div>
 
         <select name="{{ player.name }}" class="guess-select" data-conference="{{ player.conference }}" required>
-          <option disabled selected value></option>
-          {% for college in colleges %}
-            <option value="{{ college }}" data-conf="{{ college_confs[college] | default('Other') }}">{{ college }}</option>
+          <option disabled selected></option>
+          {% for college in colleges|sort %}
+            <option value="{{ college }}" data-conf="{{ college_confs[college]|default('Other') }}">{{ college }}</option>
           {% endfor %}
           <option value="Other" data-conf="Other">Other</option>
         </select>
@@ -87,84 +126,127 @@
           <button type="button" class="hint-btn">Hint</button>
           <button type="button" class="random-btn">Random</button>
         </div>
-        <p class="hint-text" style="display:none; font-size:0.45rem; margin-top:0.25rem; color:#60a5fa;"></p>
 
-        {% if results %}
-        <p class="result">
-          {% if player.result.startswith('✅') %}
-            <span class="correct">{{ player.result }}</span>
+        <p class="hint-text" style="display:none;">
+          {% if player.school_type == 'College' %}
+            I played in the {{ player.conference }}
           {% else %}
-            <span class="wrong">{{ player.result }}</span> – Correct: {{ player.correct }}
+            I didn't attend college
           {% endif %}
         </p>
+
+        {% if results %}
+          <p class="result">{% if r.startswith('✅') %}<span class="correct">Correct!</span>{% else %}<span class="wrong">Incorrect</span>{% endif %}</p>
         {% endif %}
       </div>
-      {% endfor %}
+    {% endfor %}
     </div>
 
-    <button type="submit" class="submit-btn">Submit All Guesses</button>
-    <br>
-    <a href="/new" class="play-again">🔁 Play Again</a>
+    {% if not results %}
+      <button type="submit" class="submit-btn">Submit Guesses</button>
+    {% else %}
+      <button class="submit-btn" disabled>Already Scored</button>
+    {% endif %}
   </form>
 
-  <!-- Hint + Random + Filtering Logic -->
-  <script>
-    $(document).ready(function () {
-      // Store original options
-      $('.guess-select').each(function () {
-        const $select = $(this);
-        const options = $select.find('option').map(function () {
-          return {
-            id: $(this).val(),
-            text: $(this).text(),
-            conf: $(this).data('conf')
-          };
-        }).get();
-        $select.data('full-options', options);
+  <!-- ── Score modal ───────────────────────────────────────────────────────── -->
+  {% if results %}
+  <div id="result-modal" class="modal">
+    <div class="modal-content">
+      <p>You earned {{ score }} / {{ max_points }} points!</p>
+      {% for i in range(data.players|length) %}
+        {% if not results[i].startswith('✅') %}
+          <p class="missed">{{ data.players[i].name }} – {{ correct_answers[i] }}</p>
+        {% endif %}
+      {% endfor %}
+      <a href="{{ url_for('show_quiz') }}" class="play-again-modal">Play Again</a>
+    </div>
+  </div>
+  {% endif %}
+</div> <!-- /content -->
 
-        $select.select2({
-          width: '100%',
-          placeholder: "Enter Guess",
-          minimumResultsForSearch: 5,
-          theme: 'classic',
-          dropdownAutoWidth: true
-        });
-      });
+<!-- ── JavaScript (Select2, Random, Hint-penalty modal) ───────────────────── -->
+<script>
+$(function () {
 
-      $('.hint-btn').click(function () {
-        const $card = $(this).closest('.card');
-        const $select = $card.find('.guess-select');
-        const conference = $select.data('conference');
-        const fullOptions = $select.data('full-options');
+  /* ----- Select2 init ---------------------------------------------------- */
+  $('.guess-select').each(function () {
+    const $sel = $(this);
+    const opts = $sel.find('option').map(function () {
+      return { id:$(this).val(), text:$(this).text(), conf:$(this).data('conf') };
+    }).get();
+    $sel.data('full-options', opts);
 
-        const filtered = fullOptions.filter(opt =>
-          opt.conf === conference || opt.conf === "Other"
-        );
-
-        $select.empty().append('<option disabled selected value></option>');
-        filtered.forEach(opt => {
-          $select.append(new Option(opt.text, opt.id));
-        });
-
-        $select.select2({
-          width: '100%',
-          placeholder: "Enter Guess",
-          minimumResultsForSearch: 5,
-          theme: 'classic',
-          dropdownAutoWidth: true
-        });
-
-        $card.find('.hint-text').text("Conference: " + conference).show();
-      });
-
-      $('.random-btn').click(function () {
-        const $card = $(this).closest('.card');
-        const $select = $card.find('.guess-select');
-        const options = $select.find('option').not('[disabled]');
-        const randomOption = options[Math.floor(Math.random() * options.length)];
-        $select.val(randomOption.value).trigger('change');
-      });
+    $sel.select2({
+      width: '100%', placeholder: 'Enter Guess',
+      theme: 'classic', dropdownAutoWidth: true, tags: true,
+      createTag: p => ({ id:p.term, text:p.term, conf:'Other' })
     });
-  </script>
+  });
+
+  /* ----- Random button --------------------------------------------------- */
+  $('.random-btn').click(function () {
+    const $sel = $(this).closest('.card').find('.guess-select');
+    const opts = $sel.find('option').not('[disabled]');
+    const pick = opts[Math.floor(Math.random() * opts.length)];
+    $sel.val(pick.value).trigger('change');
+  });
+
+  /* ----- Hint button (with penalty modal) -------------------------------- */
+  $('.hint-btn').click(function () {
+    const $card    = $(this).closest('.card');
+    const $flag    = $card.find('.hint-flag');
+    const used     = $flag.val() === "1";
+    const conf     = $card.data('conference');
+    const sType    = $card.data('school-type');
+
+    if (used) {     // already penalised
+      $card.find('.hint-text').fadeIn();
+      return;
+    }
+
+    $('body').append(`
+      <div id="hint-penalty-modal" class="modal">
+        <div class="modal-content">
+          <p style="margin-bottom:1rem">
+            Using a hint will limit this player to<br>
+            <span style="color:#facc15">0.75&nbsp;points</span> max.
+            <br><br>Continue?
+          </p>
+          <button id="hp-yes" class="play-again-modal">Use Hint</button>
+          <button id="hp-no"  class="play-again-modal" style="background:#475569;margin-left:1rem">Cancel</button>
+        </div>
+      </div>`).find('#hint-penalty-modal').fadeIn();
+
+    $('#hp-yes').on('click', function () {
+      $('#hint-penalty-modal').fadeOut(function(){ $(this).remove(); });
+      $flag.val("1");
+      revealHint($card, conf);
+    });
+    $('#hp-no').on('click', () =>
+      $('#hint-penalty-modal').fadeOut(function(){ $(this).remove(); })
+    );
+  });
+
+  /* helper: filter dropdown + show hint text */
+  function revealHint($card, conf) {
+    const $sel   = $card.find('.guess-select');
+    const full   = $sel.data('full-options') || [];
+    const filt   = full.filter(o => o.conf === conf || o.conf === "Other");
+    $sel.empty().append('<option disabled selected></option>');
+    filt.forEach(o => $sel.append(new Option(o.text, o.id, false, false)));
+
+    $sel.select2({
+      width:'100%', placeholder:'Enter Guess',
+      theme:'classic', dropdownAutoWidth:true, tags:true,
+      createTag:p=>({id:p.term,text:p.term,conf:'Other'})
+    });
+    $card.find('.hint-text').fadeIn();
+  }
+
+  /* ----- show score modal if present ------------------------------------ */
+  {% if results %} $('#result-modal').fadeIn(); {% endif %}
+});
+</script>
 </body>
 </html>
