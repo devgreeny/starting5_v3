@@ -1,12 +1,19 @@
+"""
+app/main/routes.py
+------------------
+All quiz-related views wrapped in a Blueprint called `main`.
+The factory in app/__init__.py will register this blueprint.
+"""
+
 import os, json, random
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for
 
-app = Flask(__name__)
+bp = Blueprint("main", __name__)
 
-# ────────────────────────────────────────────────────────────────
-BASE = os.path.dirname(__file__)
-QUIZ_DIR = os.path.join(BASE, "quiz_data")
-CONFS   = os.path.join(BASE, "college_confs.json")
+# ───── Correct file locations ───────────────────────────────────
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+QUIZ_DIR     = os.path.join(PROJECT_ROOT, "quiz_data")
+CONFS        = os.path.join(PROJECT_ROOT, "college_confs.json")
 
 
 def load_confs():
@@ -22,21 +29,23 @@ def normalise_usc(p, confs):
 
 
 # ────────────────────────────────────────────────────────────────
-@app.route("/")
-def welcome():
+@bp.route("/")
+def home():
+    """Landing page (welcome screen)."""
     return render_template("welcome.html")
 
 
 # ────────────────────────────────────────────────────────────────
-@app.route("/quiz", methods=["GET", "POST"])
+@bp.route("/quiz", methods=["GET", "POST"])
 def show_quiz():
+    """Serve the daily quiz and grade submissions."""
     conf_map, colleges = load_confs()
 
-    # ── POST: grade guesses ─────────────────────────────────────
+    # ---------- POST: grade guesses -----------------------------------------
     if request.method == "POST":
         qp = request.form.get("quiz_json_path", "")
         if not qp or not os.path.isfile(qp):
-            return redirect(url_for("show_quiz"))
+            return redirect(url_for("main.show_quiz"))
 
         with open(qp, encoding="utf-8") as f:
             data = json.load(f)
@@ -54,7 +63,7 @@ def show_quiz():
             guess        = request.form.get(name, "").strip()
             used_hint    = request.form.get(f"hint_used_{idx}", "0") == "1"
 
-            # ---------- COLLEGE PLAYERS ---------------------------------
+            # ------- COLLEGE PLAYERS -----------------------------------------
             if school_type == "College":
                 max_points += 1.0                      # always 1.0 in tally
                 if guess.lower() == team_name.lower():
@@ -65,15 +74,15 @@ def show_quiz():
                     results.append("❌")
                 correct_answers.append(team_name)
 
-            # ---------- NON-COLLEGE PLAYERS -----------------------------
+            # ------- NON-COLLEGE PLAYERS -------------------------------------
             else:
-                max_points += 1.25                     # full potential
+                max_points += 1.25
                 pts = 0.0
-                if guess.lower() == team_name.lower():        # exact team
+                if guess.lower() == team_name.lower():        # exact club
                     pts = 1.25
                 elif guess.lower() == country.lower():        # country
                     pts = 1.0
-                elif guess.lower() == "other":                # generic Other
+                elif guess.lower() == "other":                # generic “Other”
                     pts = 0.75
                 score += pts
                 results.append("✅" if pts else "❌")
@@ -91,7 +100,7 @@ def show_quiz():
             quiz_json_path  = qp
         )
 
-    # ── GET: serve new quiz --------------------------------------
+    # ---------- GET: serve a fresh quiz -------------------------------------
     quiz_files = [f for f in os.listdir(QUIZ_DIR) if f.lower().endswith(".json")]
     if not quiz_files:
         return "No quiz JSONs in quiz_data/", 500
@@ -113,8 +122,3 @@ def show_quiz():
         max_points      = None,
         quiz_json_path  = chosen
     )
-
-
-# ────────────────────────────────────────────────────────────────
-if __name__ == "__main__":
-    app.run(debug=True)

@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>NBA College Quiz</title>
+
+  <!-- Pixel font & main CSS -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='style.css') }}"
+  />
+
+  <!-- Select2 (unchanged) -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+    rel="stylesheet"
+  />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"
+  ></script>
+
+  <!-- ─────────────────────────────────────────────────────────────────────
+       Page‐level overrides (placed *after* style.css so they win):
+       1) Force the dark striped background on the entire page (html+body).
+       2) Pin the auth bar to the top of the viewport.
+  ───────────────────────────────────────────────────────────────────── -->
+  <style>
+    /* ==============================================================================
+       1) FORCE DARK STRIPED BACKGROUND ON HTML + BODY
+       ============================================================================== */
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+
+      /* repeating dark/navy stripes behind everything */
+      background-color: #0f172a !important;
+
+      /* make room at top for the fixed auth bar */
+      padding-top: 1.5rem;
+      font-family: 'Press Start 2P', monospace;
+      color: #facc15; /* Gold text by default */
+    }
+
+    /* ==============================================================================
+       2) AUTH BAR: FIXED AT TOP
+       ============================================================================== */
+    .auth-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: #0f172a;     /* Same as body background */
+      padding: 0.8rem 2rem;
+      font-size: 0.7rem;
+      color: #e2e8f0;           /* Light gray */
+      text-align: right;
+      z-index: 1000;
+      font-family: 'Press Start 2P', monospace;
+    }
+    .auth-bar a {
+      color: #eab308;           /* Gold */
+      text-decoration: none;
+      margin-left: 0.7rem;
+      transition: color 0.15s;
+    }
+    .auth-bar a:hover {
+      color: #eab308;           /* Orange‐yellow on hover */
+    }
+    .auth-bar .sep {
+      color: #000000;           /* Gray “|” separator */
+      margin-left: 0.5rem;
+      margin-right: 0.5rem;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ─────────────────────────────────────────────────────────────────────
+       AUTH BAR (fixed to top of viewport)
+  ───────────────────────────────────────────────────────────────────── -->
+  <div class="auth-bar">
+    <a href="{{ url_for('main.home') }}">Home</a>
+    <span class="sep">|</span>
+    {% if current_user.is_authenticated %}
+      Hello <strong>{{ current_user.username }}</strong>
+      <span class="sep">|</span>
+      <a href="{{ url_for('auth.logout') }}">Logout</a>
+    {% else %}
+      <a href="{{ url_for('auth.register') }}">Register</a>
+      <span class="sep">|</span>
+      <a href="{{ url_for('auth.login') }}">Login</a>
+    {% endif %}
+  </div>
+
+  <!-- ─────────────────────────────────────────────────────────────────────
+       MAIN CONTENT WRAPPER
+  ───────────────────────────────────────────────────────────────────── -->
+  <div class="content">
+    <!-- ── Header ─────────────────────────────────────────────────────────── -->
+    <div class="header-container">
+      <div class="header-title">WHERE DID THESE PLAYERS PLAY BEFORE THE NBA?</div>
+      <div class="header-matchup"><span>{{ data.matchup }}</span></div>
+      <div class="header-game_id"><span>Game ID: {{ data.game_id }}</span></div>
+    </div>
+
+    <form method="POST" action="{{ url_for('main.show_quiz') }}">
+      <input type="hidden" name="quiz_json_path" value="{{ quiz_json_path }}" />
+
+      <!-- ── Top row (players 0–2) ─────────────────────────────────────────── -->
+      <div class="row-top">
+        {% for player in data.players[0:3] %}
+          {% set idx = loop.index0 %}
+          {% if results %}{% set r = results[idx] %}{% endif %}
+
+          <div class="
+                card{% if results %}
+                        {% if r.startswith('✅') %}
+                          correct-card
+                        {% else %}
+                          wrong-card
+                        {% endif %}
+                      {% endif %}
+              "
+               data-school-type="{{ player.school_type }}"
+               data-conference="{{ player.conference }}"
+          >
+            <!-- hidden “hint used” flag -->
+            <input
+              type="hidden"
+              name="hint_used_{{ idx }}"
+              value="0"
+              class="hint-flag"
+            />
+
+            <img
+              src="https://cdn.nba.com/headshots/nba/latest/260x190/{{ player.player_id }}.png"
+              alt="{{ player.name }}"
+            />
+
+            <!-- two-line name -->
+            <h3>
+              {% set parts = player.name.split(' ') %}
+              {% if parts|length > 1 %}
+                {{ parts[0].upper() }}<br />
+                {{ parts[1:]|join(' ')|upper }}
+              {% else %}
+                {{ player.name.upper() }}
+              {% endif %}
+            </h3>
+            <p>{{ player.position }}</p>
+
+            <!-- Pts / Ast / Reb bars -->
+            <div class="stat-row">
+              <span class="stat-label">Pts:</span>
+              <span class="stat-value">{{ player.game_stats.pts|int }}</span>
+              <div class="bar">
+                <div
+                  class="bar-fill"
+                  style="width: {{ (player.game_contribution_pct.points_pct * 100)|round(1) }}%;"
+                ></div>
+              </div>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Ast:</span>
+              <span class="stat-value">{{ player.game_stats.ast|int }}</span>
+              <div class="bar">
+                <div
+                  class="bar-fill"
+                  style="width: {{ (player.game_contribution_pct.assists_pct * 100)|round(1) }}%;"
+                ></div>
+              </div>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Reb:</span>
+              <span class="stat-value">{{ player.game_stats.reb|int }}</span>
+              <div class="bar">
+                <div
+                  class="bar-fill"
+                  style="width: {{ (player.game_contribution_pct.rebounds_pct * 100)|round(1) }}%;"
+                ></div>
+              </div>
+            </div>
+
+            <!-- dropdown -->
+            <select
+              name="{{ player.name }}"
+              class="guess-select"
+              data-conference="{{ player.conference }}"
+              required
+            >
+              <option disabled selected></option>
+              {% for college in colleges|sort %}
+                <option
+                  value="{{ college }}"
+                  data-conf="{{ college_confs[college]|default('Other') }}"
+                >
+                  {{ college }}
+                </option>
+              {% endfor %}
+              <option value="Other" data-conf="Other">Other</option>
+            </select>
+
+            <div class="button-row">
+              <button type="button" class="hint-btn">Hint</button>
+              <button type="button" class="random-btn">Random</button>
+            </div>
+
+            <!-- hint text -->
+            <p class="hint-text" style="display:none;">
+              {% if player.school_type == 'College' %}
+                I played in the {{ player.conference }}
+              {% else %}
+                I didn't attend college
+              {% endif %}
+            </p>
+
+            {% if results %}
+              <p class="result">
+                {% if r.startswith('✅') %}
+                  <span class="correct">Correct!</span>
+                {% else %}
+                  <span class="wrong">Incorrect</span>
+                {% endif %}
+              </p>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- ── Bottom row (players 3–4) ───────────────────────────────────────── -->
+      <div class="row-bottom">
+        {% for player in data.players[3:5] %}
+          {% set idx = loop.index0 + 3 %}
+          {% if results %}{% set r = results[idx] %}{% endif %}
+
+          <div class="
+                card{% if results %}
+                        {% if r.startswith('✅') %}
+                          correct-card
+                        {% else %}
+                          wrong-card
+                        {% endif %}
+                      {% endif %}
+              "
+               data-school-type="{{ player.school_type }}"
+               data-conference="{{ player.conference }}"
+          >
+            <input
+              type="hidden"
+              name="hint_used_{{ idx }}"
+              value="0"
+              class="hint-flag"
+            />
+
+            <img
+              src="https://cdn.nba.com/headshots/nba/latest/260x190/{{ player.player_id }}.png"
+              alt="{{ player.name }}"
+            />
+
+            <h3>
+              {% set parts = player.name.split(' ') %}
+              {% if parts|length > 1 %}
+                {{ parts[0].upper() }}<br />
+                {{ parts[1:]|join(' ')|upper }}
+              {% else %}
+                {{ player.name.upper() }}
+              {% endif %}
+            </h3>
+            <p>{{ player.position }}</p>
+
+            <div class="stat-row">
+              <span class="stat-label">Pts:</span>
+              <span class="stat-value">{{ player.game_stats.pts|int }}</span>
+              <div class="bar">
+                <div
+                  class="bar-fill"
+                  style="width: {{ (player.game_contribution_pct.points_pct * 100)|round(1) }}%;"
+                ></div>
+              </div>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Ast:</span>
+              <span class="stat-value">{{ player.game_stats.ast|int }}</span>
+              <div class="bar">
+                <div
+                  class="bar-fill"
+                  style="width: {{ (player.game_contribution_pct.assists_pct * 100)|round(1) }}%;"
+                ></div>
+              </div>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Reb:</span>
+              <span class="stat-value">{{ player.game_stats.reb|int }}</span>
+              <div class="bar">
+                <div
+                  class="bar-fill"
+                  style="width: {{ (player.game_contribution_pct.rebounds_pct * 100)|round(1) }}%;"
+                ></div>
+              </div>
+            </div>
+
+            <select
+              name="{{ player.name }}"
+              class="guess-select"
+              data-conference="{{ player.conference }}"
+              required
+            >
+              <option disabled selected></option>
+              {% for college in colleges|sort %}
+                <option
+                  value="{{ college }}"
+                  data-conf="{{ college_confs[college]|default('Other') }}"
+                >
+                  {{ college }}
+                </option>
+              {% endfor %}
+              <option value="Other" data-conf="Other">Other</option>
+            </select>
+
+            <div class="button-row">
+              <button type="button" class="hint-btn">Hint</button>
+              <button type="button" class="random-btn">Random</button>
+            </div>
+
+            <p class="hint-text" style="display:none;">
+              {% if player.school_type == 'College' %}
+                I played in the {{ player.conference }}
+              {% else %}
+                I didn't attend college
+              {% endif %}
+            </p>
+
+            {% if results %}
+              <p class="result">
+                {% if r.startswith('✅') %}
+                  <span class="correct">Correct!</span>
+                {% else %}
+                  <span class="wrong">Incorrect</span>
+                {% endif %}
+              </p>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+
+      {% if not results %}
+        <button type="submit" class="submit-btn">Submit Guesses</button>
+      {% else %}
+        <button class="submit-btn" disabled>Already Scored</button>
+      {% endif %}
+    </form>
+
+    <!-- ── Score Modal ─────────────────────────────────────────────────────── -->
+    {% if results %}
+      <div id="result-modal" class="modal">
+        <div class="modal-content">
+          <p>You earned {{ score }} / {{ max_points }} points!</p>
+          {% for i in range(data.players|length) %}
+            {% if not results[i].startswith('✅') %}
+              <p class="missed">{{ data.players[i].name }} – {{ correct_answers[i] }}</p>
+            {% endif %}
+          {% endfor %}
+          <a href="{{ url_for('main.show_quiz') }}" class="play-again-modal">Play Again</a>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+  <!-- /content -->
+
+  <!-- ── JavaScript (Select2, Random, Hint‐modal Logic) ───────────────────── -->
+  <script>
+    $(function () {
+      /* ----- Select2 init ---------------------------------------------------- */
+      $('.guess-select').each(function () {
+        const $sel = $(this);
+        const opts = $sel
+          .find('option')
+          .map(function () {
+            return { id: $(this).val(), text: $(this).text(), conf: $(this).data('conf') };
+          })
+          .get();
+        $sel.data('full-options', opts);
+
+        $sel.select2({
+          width: '100%',
+          placeholder: 'Enter Guess',
+          theme: 'classic',
+          dropdownAutoWidth: true,
+          tags: true,
+          createTag: (p) => ({ id: p.term, text: p.term, conf: 'Other' }),
+        });
+      });
+
+      /* ----- Random button --------------------------------------------------- */
+      $('.random-btn').click(function () {
+        const $sel = $(this).closest('.card').find('.guess-select');
+        const opts = $sel.find('option').not('[disabled]');
+        const pick = opts[Math.floor(Math.random() * opts.length)];
+        $sel.val(pick.value).trigger('change');
+      });
+
+      /* ----- Hint button (with penalty modal) -------------------------------- */
+      $('.hint-btn').click(function () {
+        const $card = $(this).closest('.card');
+        const $flag = $card.find('.hint-flag');
+        const used = $flag.val() === '1';
+        const conf = $card.data('conference');
+
+        if (used) {
+          $card.find('.hint-text').fadeIn();
+          return;
+        }
+
+        $('body')
+          .append(`
+            <div id="hint-penalty-modal" class="modal">
+              <div class="modal-content">
+                <p style="margin-bottom:1rem">
+                  Using a hint will limit this player to<br>
+                  <span style="color:#facc15">0.75 points</span> max.
+                  <br><br>Continue?
+                </p>
+                <button id="hp-yes" class="play-again-modal">Use Hint</button>
+                <button id="hp-no" class="play-again-modal" style="background:#475569;margin-left:1rem">Cancel</button>
+              </div>
+            </div>`)
+          .find('#hint-penalty-modal')
+          .fadeIn();
+
+        $('#hp-yes').on('click', function () {
+          $('#hint-penalty-modal').fadeOut(function () {
+            $(this).remove();
+          });
+          $flag.val('1');
+          revealHint($card, conf);
+        });
+        $('#hp-no').on('click', () =>
+          $('#hint-penalty-modal').fadeOut(function () {
+            $(this).remove();
+          })
+        );
+      });
+
+      /* helper: filter dropdown + show hint text */
+      function revealHint($card, conf) {
+        const $sel = $card.find('.guess-select');
+        const full = $sel.data('full-options') || [];
+        const filt = full.filter((o) => o.conf === conf || o.conf === 'Other');
+        $sel.empty().append('<option disabled selected></option>');
+        filt.forEach((o) => $sel.append(new Option(o.text, o.id, false, false)));
+
+        $sel.select2({
+          width: '100%',
+          placeholder: 'Enter Guess',
+          theme: 'classic',
+          dropdownAutoWidth: true,
+          tags: true,
+          createTag: (p) => ({ id: p.term, text: p.term, conf: 'Other' }),
+        });
+        $card.find('.hint-text').fadeIn();
+      }
+
+      /* ----- show score modal if present ------------------------------------ */
+      {% if results %} $('#result-modal').fadeIn(); {% endif %}
+    });
+  </script>
+</body>
+</html>

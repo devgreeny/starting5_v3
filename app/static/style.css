@@ -1,5 +1,5 @@
 /* ────────────────────────────────────────────────────────────────────────── */
-/* 1) Global Reset & Pixel Font for Everything */
+/* 1) Global Reset & Pixel Font */
 * {
   margin: 0;
   padding: 0;
@@ -7,156 +7,174 @@
   font-family: 'Press Start 2P', monospace;
 }
 
-/* 2) Body background and general text color */
-body {
-  background-color: #0f172a; /* Dark navy */
-  color: #f1f5f9;            /* Light text */
-  padding: 2rem;
+/* ────────────────────────────────────────────────────────────────────────── */
+/* 2) Color Variables */
+:root {
+  --navy-900: #0f172a;
+  --navy-800: #1e293b;
+  --gold:      #facc15;
+  --light-gray: #e2e8f0;
+  --grayish:   #94a3b8;
+  --green:     #22c55e;
+  --red:       #ef4444;
+  --blue:      #60a5fa;
+  --modal-bg:  #1e293b;
 }
 
 /* ────────────────────────────────────────────────────────────────────────── */
-/* 3) Content wrapper to center everything */
+/* 3) Body & HTML: Solid Background, tightened top padding */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background-color: var(--navy-900);
+  color: var(--light-gray);
+  /* Reduced from ~3.3rem down to 2rem so header sits right below the fixed bar */
+  padding-top: 2rem;
+}
+
+/* ────────────────────────────────────────────────────────────────────────── */
+/* 4) Content Wrapper */
 .content {
   max-width: 1200px;
   margin: 0 auto;
+  padding: 0.88rem; /* unchanged */
 }
 
 /* ────────────────────────────────────────────────────────────────────────── */
-/* 4) Header container */
+/* 5) Header Container */
 .header-container {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 0.88rem; /* unchanged */
 }
 
 .header-title {
-  font-size: 1.5rem;          /* Slightly bigger for pixel font */
-  color: #facc15;             /* Gold */
-  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  color: var(--gold);
+  margin-bottom: 0.55rem;
 }
 
 .header-matchup span {
   display: block;
-  font-size: 1.5rem;
-  color: #e2e8f0;             /* Light gray */
-  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  color: var(--light-gray);
+  margin-bottom: 0.33rem;
 }
 
 .header-game_id span {
   display: block;
-  font-size: .75rem;
-  color: #e2e8f0;
-  margin-bottom: 2rem;             /* Light gray */
+  font-size: 0.55rem;
+  color: var(--light-gray);
+  margin-bottom: 0.88rem;
 }
 
 /* ────────────────────────────────────────────────────────────────────────── */
-/* 5) Rows of cards */
+/* 6) Rows of Cards */
 .row-top,
 .row-bottom {
   display: flex;
   justify-content: center;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 0.88rem;
+  margin-bottom: 0.88rem;
 }
 
 /* ────────────────────────────────────────────────────────────────────────── */
-/* 6) Individual Card */
+/* 7) Individual Card (≈88% of original) */
 .card {
   position: relative;
-  background-color: #0f172a;
-  border: 2px solid #1e293b;    /* Slightly lighter navy border */
+  background-color: var(--navy-900);
+  border: 2px solid var(--navy-800);
   border-radius: 0.75rem;
-  padding: 1.5rem;
-  width: 16rem;
+  padding: 0.88rem;
+  width: 9.68rem; /* keeps all five cards fitting on one screen */
   box-shadow: 0 0 1rem rgba(255, 255, 255, 0.25);
   transition: border-color 0.3s ease;
 }
 
-/* 6a) Correct / Wrong border classes */
+/* 7a) Correct / Wrong borders */
 .correct-card {
-  border-color: #22c55e !important; /* Green once scored correctly */
+  border-color: var(--green) !important;
 }
-
 .wrong-card {
-  border-color: #ef4444 !important; /* Red once scored incorrectly */
+  border-color: var(--red) !important;
 }
 
 /* ────────────────────────────────────────────────────────────────────────── */
-/* 7) Player Image */
+/* 8) Player Image (scaled up by 10%) */
 .card img {
   display: block;
-  margin: 0 auto 1rem;
-  width: 8rem;
-  height: 8rem;
+  margin: 0 auto 0.528rem;
+  width: 4.928rem;
+  height: 4.928rem;
   border-radius: 50%;
   object-fit: cover;
 }
 
 /* ────────────────────────────────────────────────────────────────────────── */
-/* 8) Player Name & Position */
-/* “First word” on top line, “rest of name” on second line. */
+/* 9) Player Name & Position */
 .card h3 {
   text-align: center;
-  font-size: 1rem;
-  color: #facc15;             /* Gold */
-  margin-bottom: 0.25rem;
+  font-size: 0.616rem;
+  color: var(--gold);
+  margin-bottom: 0.176rem;
   line-height: 1.2;
   word-break: keep-all;
 }
 
 .card p {
   text-align: center;
-  font-size: 0.65rem;         /* Smaller subtext for position */
-  color: #e2e8f0;             /* Light gray */
-  margin-bottom: 1rem;
+  font-size: 0.44rem;
+  color: var(--light-gray);
+  margin-bottom: 0.528rem;
 }
 
 /* ────────────────────────────────────────────────────────────────────────── */
-/* 9) Stat rows (Pts, Ast, Reb) aligned in one line */
+/* 10) Stat Rows */
 .stat-row {
   display: flex;
   align-items: center;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.44rem;
 }
 
 .stat-label {
-  width: 2.5rem;              /* Fixed width for “Pts:”/“Ast:”/“Reb:” */
-  font-size: 0.75rem;
-  color: #94a3b8;             /* Grayish */
+  width: 1.584rem;
+  font-size: 0.4928rem;
+  color: var(--grayish);
 }
 
 .stat-value {
-  width: 1.25rem;             /* Fixed width for the numeric value */
-  font-size: 0.6rem;
+  width: 0.792rem;
+  font-size: 0.396rem;
   color: #ffffff;
   text-align: right;
-  margin-right: 0.5rem;
-  margin-left: 0.5rem;
+  margin-right: 0.264rem;
+  margin-left: 0.4rem;
 }
 
 /* Bar container */
 .bar {
   flex-grow: 1;
-  background-color: #1e293b;  /* Dark gray-blue */
+  background-color: var(--navy-800);
   border-radius: 0.5rem;
-  height: 0.8rem;             /* Slightly thicker */
+  height: 0.44rem;
   overflow: hidden;
 }
 
-/* Filled portion of bar */
+/* Filled portion */
 .bar-fill {
-  background-color: #22c55e;  /* Green */
+  background-color: var(--green);
   height: 100%;
 }
 
 /* ────────────────────────────────────────────────────────────────────────── */
-/* 10) Select2 Dropdown (“Enter Guess”) */
-/* Make <select> span most of card’s width */
+/* 11) Select2 Dropdown (“Enter Guess”) */
 .card .select2-container {
-  width: 90% !important;       /* Slight inset from edges */
-  margin: 0 auto 1rem;
+  width: 90% !important;
+  margin: 0 auto 0.528rem;
 }
 
-/* Remove default padding, center the placeholder/selected text */
 .select2-container--classic .select2-selection--single {
   padding-left: 0 !important;
   padding-right: 0 !important;
@@ -164,130 +182,130 @@ body {
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  height: 2.2rem;              /* Stable height for centering */
-  background-color: #ffffff;   /* White background for contrast */
+  height: 1.232rem;
+  background-color: #ffffff;
   border-radius: 0.25rem;
 }
 
-.select2-container--classic .select2-selection--single .select2-selection__rendered {
+.select2-container--classic .select2-selection--single
+  .select2-selection__rendered {
   display: block;
   width: 100%;
   text-align: center !important;
-  line-height: 2.2rem;         /* Match parent height */
+  line-height: 1.232rem;
   padding: 0;
-  font-size: 0.75rem;
-  color: #94a3b8;              /* Placeholder color */
+  font-size: 0.484rem;
+  color: var(--grayish);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* Dropdown arrow on the right */
-.select2-container--classic .select2-selection--single .select2-selection__arrow {
-  right: 0.5rem;
+.select2-container--classic .select2-selection--single
+  .select2-selection__arrow {
+  right: 0.264rem;
 }
 
-/* Ensure every dropdown option is black text on white background */
 .select2-container--classic .select2-results__option {
   color: #000000 !important;
 }
 
-/* Slight highlight for the hovered option */
-.select2-container--classic .select2-results__option--highlighted[aria-selected] {
-  background-color: #e5e7eb !important; /* Light gray highlight */
+.select2-container--classic
+  .select2-results__option--highlighted[aria-selected] {
+  background-color: #e5e7eb !important;
   color: #000000 !important;
 }
 
-/* Make the search field text black */
-.select2-container--classic .select2-search--dropdown .select2-search__field {
+.select2-container--classic
+  .select2-search--dropdown .select2-search__field {
   color: #000000 !important;
 }
 
 /* ────────────────────────────────────────────────────────────────────────── */
-/* 11) Buttons (“Hint” & “Random”) */
+/* 12) Buttons (“Hint” & “Random”) */
 .button-row {
   display: flex;
   justify-content: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;       /* Space before the hint-text */
+  gap: 0.704rem;
+  margin-bottom: 0.88rem;
 }
 
 .button-row button {
-  background-color: #facc15;   /* Bright yellow */
-  color: #0f172a;              /* Dark text */
+  background-color: var(--gold);
+  color: var(--navy-900);
   border: none;
   border-radius: 0.5rem;
-  padding: 0.5rem 1rem;
-  font-size: 0.75rem;
+  padding: 0.264rem 0.616rem;
+  font-size: 0.484rem;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
 
 .button-row button:hover {
-  background-color: #eab308;   /* Slightly darker yellow */
+  background-color: #eab308;
 }
 
 /* ────────────────────────────────────────────────────────────────────────── */
-/* 12) Hint Text, absolutely centered near bottom */
+/* 13) Hint Text */
 .hint-text {
   position: absolute;
-  bottom: 0.75rem;
+  bottom: 0.44rem;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 0.75rem;
-  color: #60a5fa;               /* Blue */
+  font-size: 0.484rem;
+  color: var(--blue);
   text-align: center;
   white-space: nowrap;
 }
 
 /* ────────────────────────────────────────────────────────────────────────── */
-/* 13) Result Modal: mimic “Submit” modal style */
+/* 14) Result Modal */
 .modal {
   display: none;
   position: fixed;
   top: 35%;
   left: 50%;
   transform: translate(-50%, -35%);
-  background-color: #1e293b;    /* Darker card color */
-  border: 2px solid #facc15;    /* Gold border */
-  padding: 1.5rem 2rem;
+  background-color: var(--modal-bg);
+  border: 2px solid var(--gold);
+  padding: 0.88rem 1.232rem;
   border-radius: 0.75rem;
-  color: #facc15;
+  color: var(--gold);
   text-align: center;
   z-index: 999;
-  margin-bottom: 5rem;
+  margin-bottom: 2.64rem;
 }
 
 .modal-content .missed {
-  color: #f87171;               /* Red for missed */
-  font-size: 0.75rem;
-  margin: .75rem 0;
-  margin-top: 1.2rem;
+  color: var(--red);
+  font-size: 0.484rem;
+  margin: 0.44rem 0;
+  margin-top: 0.792rem;
 }
 
 .play-again-modal {
   display: inline-block;
-  margin-top: 1rem;
-  padding: 0.5rem 1rem;
-  background-color: #facc15;
-  color: #0f172a;
+  margin-top: 0.616rem;
+  padding: 0.264rem 0.616rem;
+  background-color: var(--gold);
+  color: var(--navy-900);
   font-weight: bold;
   border-radius: 0.5rem;
   text-decoration: none;
-  font-size: 0.75rem;
+  font-size: 0.484rem;
 }
 
 /* ────────────────────────────────────────────────────────────────────────── */
-/* 14) Submission Button */
+/* 15) Submission Button */
 .submit-btn {
   display: block;
-  margin: 0 auto 2rem;
-  background-color: #facc15;
-  color: #0f172a;
+  margin: 0 auto 0.88rem;
+  background-color: var(--gold);
+  color: var(--navy-900);
   border: none;
   border-radius: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  font-size: 0.75rem;
+  padding: 0.44rem 0.88rem;
+  font-size: 0.484rem;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
@@ -302,36 +320,14 @@ body {
 }
 
 /* ────────────────────────────────────────────────────────────────────────── */
-/* 15) Scrollbar (optional custom styling) */
+/* 16) Custom Scrollbar (Optional) */
 ::-webkit-scrollbar {
-  width: 0.5rem;
+  width: 0.55rem;
 }
 ::-webkit-scrollbar-track {
-  background: #1e293b;
+  background: var(--navy-800);
 }
 ::-webkit-scrollbar-thumb {
   background-color: #475569;
   border-radius: 0.25rem;
 }
-
-/* ────────────────────────────────────────────────────────────────────────── */
-/* 1) Global Reset & Pixel Font for Everything */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Press Start 2P', monospace;
-}
-
-/* 2) Body background and general text color */
-body {
-  background-color: #0f172a; /* Dark navy */
-  color: #f1f5f9;            /* Light text */
-  padding: 2rem;
-}
-
-/* ───────── Welcome page – scoring examples cleanup ───────── */
-.example          { justify-content: flex-start; align-items: flex-start; gap: .9rem; }
-.example img      { flex-shrink: 0; }
-.example-text     { line-height: 1.4; }
-.player-name      { display: block; color: #facc15; margin-bottom: .2rem; }
