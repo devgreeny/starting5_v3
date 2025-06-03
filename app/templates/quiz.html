@@ -489,26 +489,27 @@
   {% if results %} $('#result-modal').fadeIn(); {% endif %}
 
   // ----- Accuracy fetcher for each player result -----
-$("[data-player-name]").each(function () {
-  const el = $(this);
-  const playerName = el.data("player-name");
+  $("[data-player-name]").each(function () {
+    const el = $(this);
+    const playerName = el.data("player-name");
 
-  fetch(`/player_accuracy/${encodeURIComponent(playerName)}`)
-    .then((res) => res.json())
-    .then((data) => {
-      const percent = data.accuracy || 0;
+    fetch(`/player_accuracy/${encodeURIComponent(playerName)}`)
+      .then((res) => res.json())
+      .then((data) => {
+        const percent = data.accuracy || 0;
 
-      // Animate bar and fade in text
-      el.find(".accuracy-value")
-        .text(`${percent}%`)
-        .addClass("show");
-      el.find(".accuracy-fill").css("width", `${percent}%`);
-    })
-    .catch(() => {
-      el.find(".accuracy-value")
-        .text("N/A")
-        .addClass("show");
-      el.find(".accuracy-fill").css("width", "0%");
+        const bar = el.find(".accuracy-fill");
+        const text = el.find(".accuracy-value");
+
+        text.text(`${percent}% of other users guessed ${playerName} correctly.`);
+
+        // Force a repaint to trigger CSS transition
+        bar[0].offsetWidth;
+        bar.css("width", `${percent}%`);
+      })
+      .catch(() => {
+        el.find(".accuracy-text").text("Accuracy unavailable");
+        el.find(".accuracy-fill").css("width", "0%");
     });
 });
 

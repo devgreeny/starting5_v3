@@ -344,14 +344,14 @@ body {
   width: 100%;
   border-radius: 6px;
   overflow: hidden;
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
 .accuracy-bar-row .accuracy-fill {
   background: linear-gradient(to right, #facc15, #f59e0b);
   height: 100%;
-  width: 0%; /* Start at 0 so JS can animate it */
-  transition: width 0.4s ease-in-out;
+  width: 0%;
+  transition: width 2.0s ease-in-out;
 }
 
 .accuracy-bar-row .accuracy-value {
