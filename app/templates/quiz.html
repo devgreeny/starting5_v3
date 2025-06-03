@@ -501,21 +501,23 @@
         const bar = el.find(".accuracy-fill");
         const text = el.find(".accuracy-value");
 
-        text.text(`${percent}% of other users guessed ${playerName} correctly.`);
+        text.text(`Of other users, ${percent}% guessed ${playerName} correctly.`);
+        text.addClass("show");
 
-        // Force a repaint to trigger CSS transition
-        bar[0].offsetWidth;
-        bar.css("width", `${percent}%`);
+        bar.css("width", "0%"); // reset first
+        requestAnimationFrame(() => {
+          bar.css("width", `${percent}%`);
+        });
       })
       .catch(() => {
-        el.find(".accuracy-text").text("Accuracy unavailable");
+        el.find(".accuracy-value")
+          .text("Accuracy unavailable")
+          .addClass("show");
         el.find(".accuracy-fill").css("width", "0%");
-    });
-});
+      });
+  });
 
 });
-
-
 
 
   </script>
