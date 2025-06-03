@@ -2,15 +2,15 @@
 app/main/routes.py
 ------------------
 All quiz-related views wrapped in a Blueprint called `main`.
-The factory in app/__init__.py will register this blueprint.
 """
 
 import os, json, random
 from flask import Blueprint, render_template, request, redirect, url_for
+from flask_login import current_user, login_required
+from app.models import db, GuessLog
 
 bp = Blueprint("main", __name__)
 
-# ───── Correct file locations ───────────────────────────────────
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 QUIZ_DIR     = os.path.join(PROJECT_ROOT, "quiz_data")
 CONFS        = os.path.join(PROJECT_ROOT, "college_confs.json")
@@ -28,20 +28,16 @@ def normalise_usc(p, confs):
         p["conference"] = confs.get("USC", "P12")
 
 
-# ────────────────────────────────────────────────────────────────
 @bp.route("/")
 def home():
-    """Landing page (welcome screen)."""
     return render_template("welcome.html")
 
 
-# ────────────────────────────────────────────────────────────────
 @bp.route("/quiz", methods=["GET", "POST"])
+@login_required
 def show_quiz():
-    """Serve the daily quiz and grade submissions."""
     conf_map, colleges = load_confs()
 
-    # ---------- POST: grade guesses -----------------------------------------
     if request.method == "POST":
         qp = request.form.get("quiz_json_path", "")
         if not qp or not os.path.isfile(qp):
@@ -58,35 +54,50 @@ def show_quiz():
         for idx, p in enumerate(data["players"]):
             name         = p["name"]
             school_type  = p["school_type"]
-            team_name    = p["school"]      # e.g. “Fenerbahce” or “Louisville”
-            country      = p["country"]     # e.g. “Croatia”
+            team_name    = p["school"]
+            country      = p["country"]
             guess        = request.form.get(name, "").strip()
             used_hint    = request.form.get(f"hint_used_{idx}", "0") == "1"
 
-            # ------- COLLEGE PLAYERS -----------------------------------------
+            is_correct = False
+            pts = 0.0
+
             if school_type == "College":
-                max_points += 1.0                      # always 1.0 in tally
+                max_points += 1.0
                 if guess.lower() == team_name.lower():
-                    pts = 0.75 if used_hint else 1.0   # hint penalty only here
-                    score += pts
-                    results.append("✅")
-                else:
-                    results.append("❌")
+                    pts = 0.75 if used_hint else 1.0
+                    is_correct = True
+                score += pts
+                results.append("✅" if is_correct else "❌")
                 correct_answers.append(team_name)
 
-            # ------- NON-COLLEGE PLAYERS -------------------------------------
             else:
                 max_points += 1.25
-                pts = 0.0
-                if guess.lower() == team_name.lower():        # exact club
+                if guess.lower() == team_name.lower():
                     pts = 1.25
-                elif guess.lower() == country.lower():        # country
+                    is_correct = True
+                elif guess.lower() == country.lower():
                     pts = 1.0
-                elif guess.lower() == "other":                # generic “Other”
+                    is_correct = True
+                elif guess.lower() == "other":
                     pts = 0.75
+                    is_correct = True
                 score += pts
-                results.append("✅" if pts else "❌")
+                results.append("✅" if is_correct else "❌")
                 correct_answers.append(team_name)
+
+            # Log the guess in the database
+            guess_log = GuessLog(
+                user_id=current_user.id,
+                player_name=name,
+                school=team_name,
+                guess=guess,
+                is_correct=is_correct,
+                used_hint=used_hint
+            )
+            db.session.add(guess_log)
+
+        db.session.commit()
 
         return render_template(
             "quiz.html",
@@ -100,7 +111,7 @@ def show_quiz():
             quiz_json_path  = qp
         )
 
-    # ---------- GET: serve a fresh quiz -------------------------------------
+    # GET: serve a fresh quiz
     quiz_files = [f for f in os.listdir(QUIZ_DIR) if f.lower().endswith(".json")]
     if not quiz_files:
         return "No quiz JSONs in quiz_data/", 500
