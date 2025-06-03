@@ -332,9 +332,13 @@ body {
   border-radius: 0.25rem;
 }
 
+
+/* ────────────────────────────────────────────────────────────────────────── */
+/* 17) Accuracy Bar */
 .accuracy-bar-row {
-  margin-top: 6px;
-  font-size: 0.55rem;
+  margin-top: 40px;
+  margin-bottom: 40px;
+  font-size: 0.1rem;
   color: #facc15;
 }
 
