@@ -336,24 +336,22 @@ body {
 /* ────────────────────────────────────────────────────────────────────────── */
 /* 17) Accuracy Bar */
 .accuracy-bar-row {
-  margin-top: 24px;
-  margin-bottom: 24px;
+  margin-top: 1.2rem;
+  margin-bottom: 1.2rem;
   font-size: 0.42rem;
+  line-height: 1.2;
   color: #facc15;
   text-align: center;
-  line-height: 1.2;
   max-width: 100%;
 }
 
 .accuracy-bar-row .accuracy-value {
   display: block;
-  margin-bottom: 6px;
-  padding: 0 4px;
-  font-size: 0.42rem;
-  line-height: 1.2;
+  margin: 0.2rem auto 0.3rem;
+  max-width: 90%;
+  word-wrap: break-word;
   opacity: 0;
   transition: opacity 0.4s ease-in-out;
-  word-break: break-word;
 }
 
 .accuracy-bar-row .accuracy-value.show {
@@ -366,12 +364,11 @@ body {
   width: 100%;
   border-radius: 6px;
   overflow: hidden;
-  margin-top: 4px;
 }
 
 .accuracy-bar-row .accuracy-fill {
   background: linear-gradient(to right, #facc15, #f59e0b);
   height: 100%;
   width: 0%;
-  transition: width 1.2s ease-in-out;
+  transition: width 2s ease-in-out;
 }
