@@ -331,3 +331,36 @@ body {
   background-color: #475569;
   border-radius: 0.25rem;
 }
+
+.accuracy-bar-row {
+  margin-top: 6px;
+  font-size: 0.55rem;
+  color: #facc15;
+}
+
+.accuracy-bar-row .bar {
+  background: #1e293b;
+  height: 8px;
+  width: 100%;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: 2px;
+}
+
+.accuracy-bar-row .accuracy-fill {
+  background: linear-gradient(to right, #facc15, #f59e0b);
+  height: 100%;
+  width: 0%; /* Start at 0 so JS can animate it */
+  transition: width 0.4s ease-in-out;
+}
+
+.accuracy-bar-row .accuracy-value {
+  display: inline-block;
+  margin-left: 6px;
+  opacity: 0;
+  transition: opacity 0.4s ease-in-out;
+}
+
+.accuracy-bar-row .accuracy-value.show {
+  opacity: 1;
+}

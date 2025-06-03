@@ -228,7 +228,15 @@
                 {% else %}
                   <span class="wrong">Incorrect</span>
                 {% endif %}
-                <span class="accuracy-text" data-player-name="{{ player.name }}">Loading accuracy...</span>
+                
+                <!-- Accuracy bar -->
+                <div class="accuracy-bar-row" data-player-name="{{ player.name }}">
+                  <span class="stat-label">Correct %:</span>
+                  <span class="accuracy-value">Loading...</span>
+                  <div class="bar">
+                    <div class="bar-fill accuracy-fill" style="width: 0%;"></div>
+                  </div>
+                </div>
               </p>
             {% endif %}
           </div>
@@ -345,8 +353,16 @@
                 {% else %}
                   <span class="wrong">Incorrect</span>
                 {% endif %}
-                <span class="accuracy-text" data-player-name="{{ player.name }}">Loading accuracy...</span>
-              </p>
+                
+                <!-- Accuracy bar -->
+                <div class="accuracy-bar-row" data-player-name="{{ player.name }}">
+                  <span class="stat-label">Correct %:</span>
+                  <span class="accuracy-value">Loading...</span>
+                  <div class="bar">
+                    <div class="bar-fill accuracy-fill" style="width: 0%;"></div>
+                  </div>
+                </div>
+              </p>            
             {% endif %}
           </div>
         {% endfor %}
@@ -473,19 +489,31 @@
   {% if results %} $('#result-modal').fadeIn(); {% endif %}
 
   // ----- Accuracy fetcher for each player result -----
-  $("[data-player-name]").each(function () {
-    const el = $(this);
-    const playerName = el.data("player-name");
-    fetch(`/player_accuracy/${encodeURIComponent(playerName)}`)
-      .then((res) => res.json())
-      .then((data) => {
-        el.text(`${data.accuracy}% of players got this right`);
-      })
-      .catch(() => {
-        el.text("Accuracy unavailable");
-      });
-  });
+$("[data-player-name]").each(function () {
+  const el = $(this);
+  const playerName = el.data("player-name");
+
+  fetch(`/player_accuracy/${encodeURIComponent(playerName)}`)
+    .then((res) => res.json())
+    .then((data) => {
+      const percent = data.accuracy || 0;
+
+      // Animate bar and fade in text
+      el.find(".accuracy-value")
+        .text(`${percent}%`)
+        .addClass("show");
+      el.find(".accuracy-fill").css("width", `${percent}%`);
+    })
+    .catch(() => {
+      el.find(".accuracy-value")
+        .text("N/A")
+        .addClass("show");
+      el.find(".accuracy-fill").css("width", "0%");
+    });
 });
+
+});
+
 
 
 
