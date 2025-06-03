@@ -14,7 +14,7 @@ from urllib.parse import unquote
 bp = Blueprint("main", __name__)
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-QUIZ_DIR     = os.path.join(PROJECT_ROOT, "quiz_data")
+QUIZ_DIR     = os.path.join(PROJECT_ROOT, "preloaded_quizzes")
 CONFS        = os.path.join(PROJECT_ROOT, "college_confs.json")
 
 

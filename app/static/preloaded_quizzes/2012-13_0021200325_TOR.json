@@ -1,0 +1,119 @@
+{
+  "season": "2012-13",
+  "game_id": "0021200325",
+  "team_abbr": "TOR",
+  "opponent_abbr": "DAL",
+  "matchup": "DAL vs TOR",
+  "players": [
+    {
+      "name": "Mickael Pietrus",
+      "school": "Pau Orthez",
+      "school_type": "Other",
+      "conference": "Other",
+      "player_id": 2554,
+      "position": "Forward",
+      "country": "France",
+      "game_stats": {
+        "pts": 7.0,
+        "ast": 0.0,
+        "reb": 2.0,
+        "stl": 1.0,
+        "blk": 0.0
+      },
+      "game_contribution_pct": {
+        "points_pct": 0.167,
+        "assists_pct": 0.0,
+        "rebounds_pct": 0.083,
+        "defense_pct": 0.125
+      }
+    },
+    {
+      "name": "Ed Davis",
+      "school": "North Carolina",
+      "school_type": "College",
+      "conference": "ACC",
+      "player_id": 202334,
+      "position": "Center-Forward",
+      "country": "USA",
+      "game_stats": {
+        "pts": 6.0,
+        "ast": 3.0,
+        "reb": 8.0,
+        "stl": 1.0,
+        "blk": 0.0
+      },
+      "game_contribution_pct": {
+        "points_pct": 0.143,
+        "assists_pct": 0.273,
+        "rebounds_pct": 0.333,
+        "defense_pct": 0.125
+      }
+    },
+    {
+      "name": "Jonas Valančiūnas",
+      "school": "Lietuvos rytas Vilnius",
+      "school_type": "Other",
+      "conference": "Other",
+      "player_id": 202685,
+      "position": "Center",
+      "country": "Lithuania",
+      "game_stats": {
+        "pts": 1.0,
+        "ast": 1.0,
+        "reb": 6.0,
+        "stl": 2.0,
+        "blk": 0.0
+      },
+      "game_contribution_pct": {
+        "points_pct": 0.024,
+        "assists_pct": 0.091,
+        "rebounds_pct": 0.25,
+        "defense_pct": 0.25
+      }
+    },
+    {
+      "name": "DeMar DeRozan",
+      "school": "Southern California",
+      "school_type": "College",
+      "conference": "P12",
+      "player_id": 201942,
+      "position": "Guard-Forward",
+      "country": "USA",
+      "game_stats": {
+        "pts": 14.0,
+        "ast": 4.0,
+        "reb": 4.0,
+        "stl": 0.0,
+        "blk": 1.0
+      },
+      "game_contribution_pct": {
+        "points_pct": 0.333,
+        "assists_pct": 0.364,
+        "rebounds_pct": 0.167,
+        "defense_pct": 0.125
+      }
+    },
+    {
+      "name": "Jose Calderon",
+      "school": "Tau Ceramica",
+      "school_type": "Other",
+      "conference": "Other",
+      "player_id": 101181,
+      "position": "Guard",
+      "country": "Spain",
+      "game_stats": {
+        "pts": 14.0,
+        "ast": 3.0,
+        "reb": 4.0,
+        "stl": 1.0,
+        "blk": 2.0
+      },
+      "game_contribution_pct": {
+        "points_pct": 0.333,
+        "assists_pct": 0.273,
+        "rebounds_pct": 0.167,
+        "defense_pct": 0.375
+      }
+    }
+  ]
+}

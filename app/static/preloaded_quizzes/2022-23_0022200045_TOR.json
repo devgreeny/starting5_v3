@@ -1,0 +1,119 @@
+{
+  "season": "2022-23",
+  "game_id": "0022200045",
+  "team_abbr": "TOR",
+  "opponent_abbr": "MIA",
+  "matchup": "TOR vs MIA",
+  "players": [
+    {
+      "name": "OG Anunoby",
+      "school": "Indiana",
+      "school_type": "College",
+      "conference": "B10",
+      "player_id": 1628384,
+      "position": "Forward-Guard",
+      "country": "United Kingdom",
+      "game_stats": {
+        "pts": 6.0,
+        "ast": 0.0,
+        "reb": 7.0,
+        "stl": 2.0,
+        "blk": 1.0
+      },
+      "game_contribution_pct": {
+        "points_pct": 0.082,
+        "assists_pct": 0.0,
+        "rebounds_pct": 0.304,
+        "defense_pct": 0.3
+      }
+    },
+    {
+      "name": "Pascal Siakam",
+      "school": "New Mexico St.",
+      "school_type": "College",
+      "conference": "CUSA",
+      "player_id": 1627783,
+      "position": "Forward",
+      "country": "Cameroon",
+      "game_stats": {
+        "pts": 23.0,
+        "ast": 6.0,
+        "reb": 9.0,
+        "stl": 2.0,
+        "blk": 2.0
+      },
+      "game_contribution_pct": {
+        "points_pct": 0.315,
+        "assists_pct": 0.316,
+        "rebounds_pct": 0.391,
+        "defense_pct": 0.4
+      }
+    },
+    {
+      "name": "Christian Koloko",
+      "school": "Arizona",
+      "school_type": "College",
+      "conference": "B12",
+      "player_id": 1631132,
+      "position": "Center",
+      "country": "Cameroon",
+      "game_stats": {
+        "pts": 2.0,
+        "ast": 2.0,
+        "reb": 2.0,
+        "stl": 0.0,
+        "blk": 1.0
+      },
+      "game_contribution_pct": {
+        "points_pct": 0.027,
+        "assists_pct": 0.105,
+        "rebounds_pct": 0.087,
+        "defense_pct": 0.1
+      }
+    },
+    {
+      "name": "Gary Trent Jr.",
+      "school": "Duke",
+      "school_type": "College",
+      "conference": "ACC",
+      "player_id": 1629018,
+      "position": "Guard",
+      "country": "USA",
+      "game_stats": {
+        "pts": 18.0,
+        "ast": 2.0,
+        "reb": 1.0,
+        "stl": 1.0,
+        "blk": 0.0
+      },
+      "game_contribution_pct": {
+        "points_pct": 0.247,
+        "assists_pct": 0.105,
+        "rebounds_pct": 0.043,
+        "defense_pct": 0.1
+      }
+    },
+    {
+      "name": "Fred VanVleet",
+      "school": "Wichita St.",
+      "school_type": "College",
+      "conference": "Amer",
+      "player_id": 1627832,
+      "position": "Guard",
+      "country": "USA",
+      "game_stats": {
+        "pts": 24.0,
+        "ast": 9.0,
+        "reb": 4.0,
+        "stl": 1.0,
+        "blk": 0.0
+      },
+      "game_contribution_pct": {
+        "points_pct": 0.329,
+        "assists_pct": 0.474,
+        "rebounds_pct": 0.174,
+        "defense_pct": 0.1
+      }
+    }
+  ]
+}

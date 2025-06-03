@@ -1,0 +1,119 @@
+{
+  "season": "2023-24",
+  "game_id": "0022300344",
+  "team_abbr": "BOS",
+  "opponent_abbr": "ORL",
+  "matchup": "ORL vs BOS",
+  "players": [
+    {
+      "name": "Jaylen Brown",
+      "school": "California",
+      "school_type": "College",
+      "conference": "ACC",
+      "player_id": 1627759,
+      "position": "Guard-Forward",
+      "country": "USA",
+      "game_stats": {
+        "pts": 31.0,
+        "ast": 6.0,
+        "reb": 5.0,
+        "stl": 1.0,
+        "blk": 1.0
+      },
+      "game_contribution_pct": {
+        "points_pct": 0.333,
+        "assists_pct": 0.462,
+        "rebounds_pct": 0.147,
+        "defense_pct": 0.182
+      }
+    },
+    {
+      "name": "Jayson Tatum",
+      "school": "Duke",
+      "school_type": "College",
+      "conference": "ACC",
+      "player_id": 1628369,
+      "position": "Forward-Guard",
+      "country": "USA",
+      "game_stats": {
+        "pts": 23.0,
+        "ast": 3.0,
+        "reb": 8.0,
+        "stl": 0.0,
+        "blk": 1.0
+      },
+      "game_contribution_pct": {
+        "points_pct": 0.247,
+        "assists_pct": 0.231,
+        "rebounds_pct": 0.235,
+        "defense_pct": 0.091
+      }
+    },
+    {
+      "name": "Kristaps Porziņģis",
+      "school": "Cajasol Sevilla",
+      "school_type": "Other",
+      "conference": "Other",
+      "player_id": 204001,
+      "position": "Forward-Center",
+      "country": "Latvia",
+      "game_stats": {
+        "pts": 15.0,
+        "ast": 0.0,
+        "reb": 10.0,
+        "stl": 1.0,
+        "blk": 1.0
+      },
+      "game_contribution_pct": {
+        "points_pct": 0.161,
+        "assists_pct": 0.0,
+        "rebounds_pct": 0.294,
+        "defense_pct": 0.182
+      }
+    },
+    {
+      "name": "Derrick White",
+      "school": "Colorado",
+      "school_type": "College",
+      "conference": "B12",
+      "player_id": 1628401,
+      "position": "Guard",
+      "country": "USA",
+      "game_stats": {
+        "pts": 10.0,
+        "ast": 4.0,
+        "reb": 5.0,
+        "stl": 1.0,
+        "blk": 3.0
+      },
+      "game_contribution_pct": {
+        "points_pct": 0.108,
+        "assists_pct": 0.308,
+        "rebounds_pct": 0.147,
+        "defense_pct": 0.364
+      }
+    },
+    {
+      "name": "Jrue Holiday",
+      "school": "UCLA",
+      "school_type": "College",
+      "conference": "B10",
+      "player_id": 201950,
+      "position": "Guard",
+      "country": "USA",
+      "game_stats": {
+        "pts": 14.0,
+        "ast": 0.0,
+        "reb": 6.0,
+        "stl": 0.0,
+        "blk": 2.0
+      },
+      "game_contribution_pct": {
+        "points_pct": 0.151,
+        "assists_pct": 0.0,
+        "rebounds_pct": 0.176,
+        "defense_pct": 0.182
+      }
+    }
+  ]
+}
