@@ -1,9 +1,3 @@
-"""
-app/main/routes.py
-------------------
-All quiz-related views wrapped in a Blueprint called `main`.
-"""
-
 import os, json, random
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify, make_response
 from flask_login import current_user, login_required
@@ -15,6 +9,7 @@ bp = Blueprint("main", __name__)
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 QUIZ_DIR     = os.path.join(PROJECT_ROOT, "app", "static", "preloaded_quizzes")
+CURRENT_DIR  = os.path.join(PROJECT_ROOT, "app", "static", "current_quiz")
 CONFS        = os.path.join(PROJECT_ROOT, "college_confs.json")
 
 
@@ -41,6 +36,7 @@ def show_quiz():
     conf_map, colleges = load_confs()
 
     if request.method == "POST":
+        # (Unchanged) read quiz_json_path from the form and grade it
         qp = request.form.get("quiz_json_path", "")
         if not qp or not os.path.isfile(qp):
             return redirect(url_for("main.show_quiz"))
@@ -113,13 +109,22 @@ def show_quiz():
             quiz_json_path  = qp
         )
 
-    # GET: serve a fresh quiz
-    quiz_files = [f for f in os.listdir(QUIZ_DIR) if f.lower().endswith(".json")]
-    if not quiz_files:
-        return "No quiz JSONs in quiz_data/", 500
+    # ─────────────────────────────────────────────────────────────────────────────
+    # GET: serve whatever JSON is in CURRENT_DIR (there should be exactly one file)
+    # ─────────────────────────────────────────────────────────────────────────────
+    # Ensure current_quiz folder exists (if not, create it)
+    os.makedirs(CURRENT_DIR, exist_ok=True)
 
-    chosen = os.path.join(QUIZ_DIR, random.choice(quiz_files))
-    with open(chosen, encoding="utf-8") as f:
+    # Look for any .json in CURRENT_DIR
+    current_files = [f for f in os.listdir(CURRENT_DIR) if f.lower().endswith(".json")]
+    if not current_files:
+        return "❌ No current quiz loaded. Please run the updater script.", 500
+
+    # We assume only ONE file should be there at a time
+    quiz_filename = current_files[0]
+    quiz_path = os.path.join(CURRENT_DIR, quiz_filename)
+
+    with open(quiz_path, encoding="utf-8") as f:
         data = json.load(f)
     for pl in data["players"]:
         normalise_usc(pl, conf_map)
@@ -133,8 +138,9 @@ def show_quiz():
         correct_answers = [],
         score           = None,
         max_points      = None,
-        quiz_json_path  = chosen
+        quiz_json_path  = quiz_path
     )
+
 
 @bp.route("/player_accuracy/<player_name>")
 def player_accuracy(player_name):
