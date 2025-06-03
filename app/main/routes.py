@@ -5,9 +5,11 @@ All quiz-related views wrapped in a Blueprint called `main`.
 """
 
 import os, json, random
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for, jsonify, make_response
 from flask_login import current_user, login_required
 from app.models import db, GuessLog
+from sqlalchemy import func
+from urllib.parse import unquote
 
 bp = Blueprint("main", __name__)
 
@@ -133,3 +135,19 @@ def show_quiz():
         max_points      = None,
         quiz_json_path  = chosen
     )
+
+@bp.route("/player_accuracy/<player_name>")
+def player_accuracy(player_name):
+    safe_name = unquote(player_name)
+
+    total = db.session.query(func.count(GuessLog.id)).filter_by(player_name=safe_name).scalar()
+    correct = db.session.query(func.count(GuessLog.id)).filter_by(player_name=safe_name, is_correct=True).scalar()
+
+    percent = round(100 * correct / total, 1) if total else 0
+
+    response = make_response(jsonify({"player": safe_name, "accuracy": percent}))
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+
+    return response

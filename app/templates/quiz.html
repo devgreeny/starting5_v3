@@ -228,6 +228,7 @@
                 {% else %}
                   <span class="wrong">Incorrect</span>
                 {% endif %}
+                <span class="accuracy-text" data-player-name="{{ player.name }}">Loading accuracy...</span>
               </p>
             {% endif %}
           </div>
@@ -344,6 +345,7 @@
                 {% else %}
                   <span class="wrong">Incorrect</span>
                 {% endif %}
+                <span class="accuracy-text" data-player-name="{{ player.name }}">Loading accuracy...</span>
               </p>
             {% endif %}
           </div>
@@ -377,99 +379,116 @@
   <!-- ── JavaScript (Select2, Random, Hint‐modal Logic) ───────────────────── -->
   <script>
     $(function () {
-      /* ----- Select2 init ---------------------------------------------------- */
-      $('.guess-select').each(function () {
-        const $sel = $(this);
-        const opts = $sel
-          .find('option')
-          .map(function () {
-            return { id: $(this).val(), text: $(this).text(), conf: $(this).data('conf') };
-          })
-          .get();
-        $sel.data('full-options', opts);
+  /* ----- Select2 init ---------------------------------------------------- */
+  $('.guess-select').each(function () {
+    const $sel = $(this);
+    const opts = $sel
+      .find('option')
+      .map(function () {
+        return { id: $(this).val(), text: $(this).text(), conf: $(this).data('conf') };
+      })
+      .get();
+    $sel.data('full-options', opts);
 
-        $sel.select2({
-          width: '100%',
-          placeholder: 'Enter Guess',
-          theme: 'classic',
-          dropdownAutoWidth: true,
-          tags: true,
-          createTag: (p) => ({ id: p.term, text: p.term, conf: 'Other' }),
-        });
-      });
-
-      /* ----- Random button --------------------------------------------------- */
-      $('.random-btn').click(function () {
-        const $sel = $(this).closest('.card').find('.guess-select');
-        const opts = $sel.find('option').not('[disabled]');
-        const pick = opts[Math.floor(Math.random() * opts.length)];
-        $sel.val(pick.value).trigger('change');
-      });
-
-      /* ----- Hint button (with penalty modal) -------------------------------- */
-      $('.hint-btn').click(function () {
-        const $card = $(this).closest('.card');
-        const $flag = $card.find('.hint-flag');
-        const used = $flag.val() === '1';
-        const conf = $card.data('conference');
-
-        if (used) {
-          $card.find('.hint-text').fadeIn();
-          return;
-        }
-
-        $('body')
-          .append(`
-            <div id="hint-penalty-modal" class="modal">
-              <div class="modal-content">
-                <p style="margin-bottom:1rem">
-                  Using a hint will limit this player to<br>
-                  <span style="color:#facc15">0.75 points</span> max.
-                  <br><br>Continue?
-                </p>
-                <button id="hp-yes" class="play-again-modal">Use Hint</button>
-                <button id="hp-no" class="play-again-modal" style="background:#475569;margin-left:1rem">Cancel</button>
-              </div>
-            </div>`)
-          .find('#hint-penalty-modal')
-          .fadeIn();
-
-        $('#hp-yes').on('click', function () {
-          $('#hint-penalty-modal').fadeOut(function () {
-            $(this).remove();
-          });
-          $flag.val('1');
-          revealHint($card, conf);
-        });
-        $('#hp-no').on('click', () =>
-          $('#hint-penalty-modal').fadeOut(function () {
-            $(this).remove();
-          })
-        );
-      });
-
-      /* helper: filter dropdown + show hint text */
-      function revealHint($card, conf) {
-        const $sel = $card.find('.guess-select');
-        const full = $sel.data('full-options') || [];
-        const filt = full.filter((o) => o.conf === conf || o.conf === 'Other');
-        $sel.empty().append('<option disabled selected></option>');
-        filt.forEach((o) => $sel.append(new Option(o.text, o.id, false, false)));
-
-        $sel.select2({
-          width: '100%',
-          placeholder: 'Enter Guess',
-          theme: 'classic',
-          dropdownAutoWidth: true,
-          tags: true,
-          createTag: (p) => ({ id: p.term, text: p.term, conf: 'Other' }),
-        });
-        $card.find('.hint-text').fadeIn();
-      }
-
-      /* ----- show score modal if present ------------------------------------ */
-      {% if results %} $('#result-modal').fadeIn(); {% endif %}
+    $sel.select2({
+      width: '100%',
+      placeholder: 'Enter Guess',
+      theme: 'classic',
+      dropdownAutoWidth: true,
+      tags: true,
+      createTag: (p) => ({ id: p.term, text: p.term, conf: 'Other' }),
     });
+  });
+
+  /* ----- Random button --------------------------------------------------- */
+  $('.random-btn').click(function () {
+    const $sel = $(this).closest('.card').find('.guess-select');
+    const opts = $sel.find('option').not('[disabled]');
+    const pick = opts[Math.floor(Math.random() * opts.length)];
+    $sel.val(pick.value).trigger('change');
+  });
+
+  /* ----- Hint button (with penalty modal) -------------------------------- */
+  $('.hint-btn').click(function () {
+    const $card = $(this).closest('.card');
+    const $flag = $card.find('.hint-flag');
+    const used = $flag.val() === '1';
+    const conf = $card.data('conference');
+
+    if (used) {
+      $card.find('.hint-text').fadeIn();
+      return;
+    }
+
+    $('body')
+      .append(`
+        <div id="hint-penalty-modal" class="modal">
+          <div class="modal-content">
+            <p style="margin-bottom:1rem">
+              Using a hint will limit this player to<br>
+              <span style="color:#facc15">0.75 points</span> max.
+              <br><br>Continue?
+            </p>
+            <button id="hp-yes" class="play-again-modal">Use Hint</button>
+            <button id="hp-no" class="play-again-modal" style="background:#475569;margin-left:1rem">Cancel</button>
+          </div>
+        </div>`)
+      .find('#hint-penalty-modal')
+      .fadeIn();
+
+    $('#hp-yes').on('click', function () {
+      $('#hint-penalty-modal').fadeOut(function () {
+        $(this).remove();
+      });
+      $flag.val('1');
+      revealHint($card, conf);
+    });
+    $('#hp-no').on('click', () =>
+      $('#hint-penalty-modal').fadeOut(function () {
+        $(this).remove();
+      })
+    );
+  });
+
+  /* helper: filter dropdown + show hint text */
+  function revealHint($card, conf) {
+    const $sel = $card.find('.guess-select');
+    const full = $sel.data('full-options') || [];
+    const filt = full.filter((o) => o.conf === conf || o.conf === 'Other');
+    $sel.empty().append('<option disabled selected></option>');
+    filt.forEach((o) => $sel.append(new Option(o.text, o.id, false, false)));
+
+    $sel.select2({
+      width: '100%',
+      placeholder: 'Enter Guess',
+      theme: 'classic',
+      dropdownAutoWidth: true,
+      tags: true,
+      createTag: (p) => ({ id: p.term, text: p.term, conf: 'Other' }),
+    });
+    $card.find('.hint-text').fadeIn();
+  }
+
+  /* ----- show score modal if present ------------------------------------ */
+  {% if results %} $('#result-modal').fadeIn(); {% endif %}
+
+  // ----- Accuracy fetcher for each player result -----
+  $("[data-player-name]").each(function () {
+    const el = $(this);
+    const playerName = el.data("player-name");
+    fetch(`/player_accuracy/${encodeURIComponent(playerName)}`)
+      .then((res) => res.json())
+      .then((data) => {
+        el.text(`${data.accuracy}% of players got this right`);
+      })
+      .catch(() => {
+        el.text("Accuracy unavailable");
+      });
+  });
+});
+
+
+
   </script>
 </body>
 </html>
