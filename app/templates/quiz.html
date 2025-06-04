@@ -366,10 +366,12 @@
         {% endfor %}
       </div>
 
-      {% if not results %}
-        <button type="submit" class="submit-btn">Submit Guesses</button>
-      {% else %}
+      {% if results %}
         <button class="submit-btn" disabled>Already Scored</button>
+      {% elif played_today %}
+        <button class="submit-btn" disabled>Already Played Today</button>
+      {% else %}
+        <button type="submit" class="submit-btn">Submit Guesses</button>
       {% endif %}
     </form>
 
@@ -383,7 +385,7 @@
               <p class="missed">{{ data.players[i].name }} – {{ correct_answers[i] }}</p>
             {% endif %}
           {% endfor %}
-          <a href="{{ url_for('main.show_quiz') }}" class="play-again-modal">Play Again</a>
+          <a href="#" id="exit-modal" class="play-again-modal">Exit</a>
         </div>
       </div>
     {% endif %}
@@ -485,6 +487,11 @@
 
   /* ----- show score modal if present ------------------------------------ */
   {% if results %} $('#result-modal').fadeIn(); {% endif %}
+
+  $('#exit-modal').on('click', function (e) {
+    e.preventDefault();
+    $('#result-modal').fadeOut();
+  });
 
   // ----- Accuracy fetcher for each player result -----
   $("[data-player-name]").each(function () {
