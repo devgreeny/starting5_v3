@@ -3,6 +3,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, jsonif
 from flask_login import current_user, login_required
 from app.models import db, GuessLog
 from sqlalchemy import func
+from datetime import date
 from urllib.parse import unquote
 
 bp = Blueprint("main", __name__)
@@ -34,6 +35,10 @@ def home():
 @login_required
 def show_quiz():
     conf_map, colleges = load_confs()
+    played_today = db.session.query(GuessLog.id).filter(
+        GuessLog.user_id == current_user.id,
+        GuessLog.play_date == date.today()
+    ).first() is not None
 
     if request.method == "POST":
         # (Unchanged) read quiz_json_path from the form and grade it
@@ -84,18 +89,20 @@ def show_quiz():
                 results.append("✅" if is_correct else "❌")
                 correct_answers.append(team_name)
 
-            # Log the guess in the database
-            guess_log = GuessLog(
-                user_id=current_user.id,
-                player_name=name,
-                school=team_name,
-                guess=guess,
-                is_correct=is_correct,
-                used_hint=used_hint
-            )
-            db.session.add(guess_log)
+            if not played_today:
+                guess_log = GuessLog(
+                    user_id=current_user.id,
+                    player_name=name,
+                    school=team_name,
+                    guess=guess,
+                    is_correct=is_correct,
+                    used_hint=used_hint
+                )
+                db.session.add(guess_log)
 
-        db.session.commit()
+        if not played_today:
+            db.session.commit()
+            played_today = True
 
         return render_template(
             "quiz.html",
@@ -106,7 +113,8 @@ def show_quiz():
             correct_answers = correct_answers,
             score           = round(score, 2),
             max_points      = round(max_points, 2),
-            quiz_json_path  = qp
+            quiz_json_path  = qp,
+            played_today   = played_today
         )
 
     # ─────────────────────────────────────────────────────────────────────────────
@@ -138,7 +146,8 @@ def show_quiz():
         correct_answers = [],
         score           = None,
         max_points      = None,
-        quiz_json_path  = quiz_path
+        quiz_json_path  = quiz_path,
+        played_today   = played_today
     )
 
 
